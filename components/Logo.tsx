@@ -1,5 +1,6 @@
 
 import React from 'react';
+import logoImage from '../assets/ITNEXT.png';
 
 interface LogoProps {
   className?: string;
@@ -8,17 +9,17 @@ interface LogoProps {
   vertical?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = "", hideText = false, light = false }) => {
+export const Logo: React.FC<LogoProps> = ({ className = "", hideText = false }) => {
   // If hideText is true, we return nothing because the "logo" (icon) is removed
   if (hideText) return null;
 
-  const textColor = light ? "text-white" : "text-brand-dark";
-
   return (
     <div className={`flex items-center ${className}`}>
-      <span className={`text-2xl font-black tracking-tighter uppercase ${textColor}`}>
-        ITNEXT
-      </span>
+      <img 
+        src={logoImage} 
+        alt="ITNEXT Logo" 
+        className="h-10 w-auto"
+      />
     </div>
   );
 };
