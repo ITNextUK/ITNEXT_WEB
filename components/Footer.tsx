@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-32">
           <div className="col-span-1 md:col-span-2">
-            <Logo className="h-8 mb-10" light />
+            <Logo className="h-8 mb-10" />
             <p className="max-w-sm mb-12 text-zinc-500 leading-relaxed font-medium">
               A strategic, research-led platform focused on the intersection of data science, AI automation, and resilient digital architecture.
             </p>

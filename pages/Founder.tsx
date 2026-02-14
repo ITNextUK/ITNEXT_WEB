@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { Linkedin, Award, BookOpen, GraduationCap, Mail, ArrowUpRight, Globe, Shield, Zap } from 'lucide-react';
+import founderImage from '../assets/1755347681490 (1).jpg';
 
-const Founder: React.FC = () => {
-  // Founder's actual profile picture placeholder
-  const founderImage = "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop"; 
+const Founder: React.FC = () => { 
   
   return (
     <div className="pb-0 bg-white animate-in fade-in duration-700">
@@ -55,7 +54,7 @@ const Founder: React.FC = () => {
               </div>
 
               <div className="mt-12 flex flex-col items-center lg:items-start space-y-6">
-                <a href="https://linkedin.com/in/sangeeth-l" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-4 text-zinc-400 hover:text-brand-accent transition-all group">
+                <a href="https://www.linkedin.com/in/sangeeth-liyanarachchi-8886b7134/" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-4 text-zinc-400 hover:text-brand-accent transition-all group">
                   <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-brand-accent transition-colors">
                     <Linkedin size={20} />
                   </div>
