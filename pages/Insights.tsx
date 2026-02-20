@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { RECENT_INSIGHTS } from '../constants';
 import { Calendar, User, ArrowUpRight, BookOpen, Newspaper, Lightbulb, MessageSquare, Zap, Globe, Activity, Database, Sparkles } from 'lucide-react';
+import { useGlobalContext } from '../context/GlobalContext';
 
 const Insights: React.FC = () => {
+  const { content } = useGlobalContext();
   const categories = [
     { name: 'Research Notes', count: 12 },
     { name: 'Strategy', count: 8 },
@@ -14,7 +15,6 @@ const Insights: React.FC = () => {
 
   return (
     <div className="pb-0 bg-white animate-in fade-in duration-700">
-      {/* Centered Minimalist Hero */}
       <section className="pt-48 pb-24 px-6 relative border-b border-zinc-100">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="max-w-3xl">
@@ -23,7 +23,7 @@ const Insights: React.FC = () => {
               <span className="text-brand-accent text-[10px] font-black uppercase tracking-[0.4em]">Knowledge & Analysis</span>
               <div className="w-12 h-[1px] bg-brand-accent"></div>
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black text-brand-dark leading-[1.1] mb-10 tracking-tighter">
+            <h1 className="text-4xl lg:text-6xl font-black text-brand-dark leading-[1.1] mb-10 tracking-tighter uppercase">
               Strategic Intelligence
             </h1>
             <p className="text-xl text-zinc-500 leading-relaxed font-medium mx-auto">
@@ -32,7 +32,6 @@ const Insights: React.FC = () => {
           </div>
         </div>
         
-        {/* Subtle geometric background detail */}
         <div className="absolute top-0 right-0 w-1/3 h-full opacity-[0.03] pointer-events-none hidden lg:block text-brand-dark">
           <svg width="100%" height="100%" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 100H400M0 200H400M0 300H400M0 400H400M0 500H400M0 600H400M0 700H400" stroke="currentColor" strokeWidth="1"/>
@@ -41,11 +40,10 @@ const Insights: React.FC = () => {
         </div>
       </section>
 
-      {/* Uniform High-Attention Insights Grid */}
       <section className="py-24 px-6 bg-zinc-50/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {RECENT_INSIGHTS.map((post, index) => (
+            {content.insights.map((post, index) => (
               <div 
                 key={post.id} 
                 className="group relative overflow-hidden bg-white rounded-[3rem] border border-zinc-200 p-12 lg:p-16 flex flex-col justify-between hover:border-brand-accent transition-all duration-700 shadow-sm hover:shadow-2xl hover:shadow-brand-accent/10 min-h-[500px]"
@@ -92,7 +90,6 @@ const Insights: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Decorative Background Element */}
                 <div className="absolute -bottom-12 -right-12 opacity-[0.02] group-hover:opacity-[0.06] transition-all duration-1000 group-hover:scale-110 pointer-events-none text-brand-dark">
                    <BookOpen size={280} />
                 </div>
@@ -102,12 +99,9 @@ const Insights: React.FC = () => {
         </div>
       </section>
 
-      {/* Categories & Subscription - High Impact Blocks */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-            
-            {/* Category Pillar */}
             <div className="lg:col-span-5">
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-accent mb-10">Taxonomy</h2>
               <h3 className="text-4xl font-black text-brand-dark mb-10 tracking-tight uppercase">Knowledge Areas</h3>
@@ -124,7 +118,6 @@ const Insights: React.FC = () => {
               </div>
             </div>
 
-            {/* Newsletter Architecture Block */}
             <div className="lg:col-span-7">
               <div className="bg-brand-dark rounded-[3rem] p-12 lg:p-24 text-white relative overflow-hidden h-full flex flex-col justify-center">
                 <div className="relative z-10">
@@ -141,7 +134,7 @@ const Insights: React.FC = () => {
                     <input 
                       type="email" 
                       placeholder="ENTER WORK EMAIL" 
-                      className="flex-grow bg-white/5 border border-white/10 rounded-full px-8 py-5 text-xs font-bold tracking-widest focus:outline-none focus:border-brand-accent transition-all placeholder:text-zinc-600"
+                      className="flex-grow bg-white/5 border border-white/10 rounded-full px-8 py-5 text-xs font-bold tracking-widest focus:outline-none focus:border-brand-accent transition-all placeholder:text-zinc-600 uppercase"
                     />
                     <button className="bg-brand-accent text-white px-10 py-5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-white hover:text-brand-dark transition-all shadow-2xl shadow-brand-accent/20 whitespace-nowrap">
                       Join Research Hub
@@ -149,18 +142,15 @@ const Insights: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Decorative background logo */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none text-white">
                   <MessageSquare size={400} strokeWidth={0.5} />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* Insights Reach Metrics */}
       <section className="py-24 px-6 bg-zinc-50 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
           {[

@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-32">
           <div className="col-span-1 md:col-span-2">
-            <Logo className="h-8 mb-10" />
+            <Logo className="h-8 mb-10" light />
             <p className="max-w-sm mb-12 text-zinc-500 leading-relaxed font-medium">
               A strategic, research-led platform focused on the intersection of data science, AI automation, and resilient digital architecture.
             </p>
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-5 text-[11px] font-bold uppercase tracking-[0.2em]">
               <li><Link to="/focus-areas" className="hover:text-white transition-colors">Focus Areas</Link></li>
               <li><Link to="/research" className="hover:text-white transition-colors">Research</Link></li>
-              <li><Link to="/insights" className="hover:text-white transition-colors">Insights</Link></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
               <li><Link to="/founder" className="hover:text-white transition-colors">Founder</Link></li>
               <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
             </ul>

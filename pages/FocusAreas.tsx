@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { FOCUS_AREAS } from '../constants';
 import { BarChart2, Cpu, Shield, RefreshCcw, ArrowUpRight, Database, Network, Activity, Zap, Lock, Globe, Layers } from 'lucide-react';
+import { useGlobalContext } from '../context/GlobalContext';
 
 const FocusAreas: React.FC = () => {
+  const { content } = useGlobalContext();
   const getIcon = (id: string) => {
     switch(id) {
       case 'data-products': return <BarChart2 size={32} />;
@@ -24,7 +25,6 @@ const FocusAreas: React.FC = () => {
 
   return (
     <div className="pb-0 bg-white animate-in fade-in duration-700">
-      {/* Centered Minimalist Hero */}
       <section className="pt-48 pb-24 px-6 relative border-b border-zinc-100">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="max-w-3xl">
@@ -43,7 +43,6 @@ const FocusAreas: React.FC = () => {
           </div>
         </div>
         
-        {/* Subtle geometric background detail */}
         <div className="absolute top-0 right-0 w-1/3 h-full opacity-[0.03] pointer-events-none hidden lg:block text-brand-dark">
           <svg width="100%" height="100%" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 100H400M0 200H400M0 300H400M0 400H400M0 500H400M0 600H400M0 700H400" stroke="currentColor" strokeWidth="1"/>
@@ -52,11 +51,10 @@ const FocusAreas: React.FC = () => {
         </div>
       </section>
 
-      {/* Uniform High-Attention Capability Grid */}
       <section className="py-24 px-6 bg-zinc-50/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {FOCUS_AREAS.map((area, index) => (
+            {content.focusAreas.map((area, index) => (
               <div 
                 key={area.id} 
                 className="group relative overflow-hidden bg-white rounded-[3rem] border border-zinc-200 p-12 lg:p-16 flex flex-col justify-between hover:border-brand-accent transition-all duration-700 shadow-sm hover:shadow-2xl hover:shadow-brand-accent/10 h-full min-h-[500px]"
@@ -90,7 +88,6 @@ const FocusAreas: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Decorative Background Element */}
                 <div className="absolute -bottom-12 -right-12 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 group-hover:scale-110 pointer-events-none text-brand-dark">
                   {getDecorativeIcon(area.id)}
                 </div>
@@ -100,7 +97,6 @@ const FocusAreas: React.FC = () => {
         </div>
       </section>
 
-      {/* Strategic Framework Deep-Dive */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
@@ -137,7 +133,7 @@ const FocusAreas: React.FC = () => {
                 </blockquote>
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-[1px] bg-brand-accent"></div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-accent">Strategic Vision</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-accent uppercase">Strategic Vision</span>
                 </div>
               </div>
               
@@ -149,7 +145,6 @@ const FocusAreas: React.FC = () => {
         </div>
       </section>
 
-      {/* Industrial Capability Metrics */}
       <section className="py-24 px-6 bg-zinc-50 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
           {[
