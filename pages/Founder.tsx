@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Linkedin, Award, BookOpen, GraduationCap, Mail, Globe, Shield, Zap, Phone } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
+import founderImage from '../assets/1755347681490 (1).jpg';
 
 const Founder: React.FC = () => {
   const { content } = useGlobalContext();
@@ -42,7 +42,7 @@ const Founder: React.FC = () => {
               <div className="relative group">
                 <div className="aspect-square bg-white rounded-[3rem] overflow-hidden shadow-2xl relative transition-all duration-700 border border-zinc-100">
                   <img 
-                    src={founder.image} 
+                    src={founderImage} 
                     alt={founder.name} 
                     className="w-full h-full object-cover transition-all duration-1000 scale-100 group-hover:scale-105 filter group-hover:brightness-105"
                   />
