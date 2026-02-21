@@ -16,6 +16,7 @@ import {
   Camera
 } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useAuth } from '../context/AuthContext';
 import { InsightPost, ContentBlock, ContentBlockType, SiteContent } from '../types';
 
 // Shared Admin UI Components
@@ -1023,8 +1024,16 @@ const BlogEditor = () => {
 
 const Admin: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/admin');
+  };
+  
   const menuItems = [
-    { label: 'Intelligence Dashboard', path: '/admin', icon: <LayoutDashboard size={18} /> },
+    { label: 'Intelligence Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
     { label: 'Site Hero Console', path: '/admin/home', icon: <HomeIcon size={18} /> },
     { label: 'Strategic Journal', path: '/admin/blog', icon: <BookOpen size={18} /> },
     { label: 'Leadership Profile', path: '/admin/founder', icon: <Users size={18} /> },
@@ -1070,7 +1079,7 @@ const Admin: React.FC = () => {
                  <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Full Access</div>
               </div>
            </div>
-           <button onClick={() => window.location.href = '/'} className="flex items-center space-x-4 w-full px-6 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:bg-red-500 hover:text-white transition-all">
+           <button onClick={handleLogout} className="flex items-center space-x-4 w-full px-6 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:bg-red-500 hover:text-white transition-all">
               <LogOut size={16} />
               <span>Sign Out</span>
            </button>
@@ -1080,7 +1089,7 @@ const Admin: React.FC = () => {
       <div className="flex-grow p-12 lg:p-20 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
           <Routes>
-            <Route path="/" element={<DashboardHome />} />
+            <Route path="/dashboard" element={<DashboardHome />} />
             <Route path="/home" element={<HomeEditor />} />
             <Route path="/blog" element={<BlogEditor />} />
             <Route path="/founder" element={<FounderEditor />} />

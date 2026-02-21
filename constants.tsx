@@ -9,7 +9,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Founder', path: '/founder' },
   { label: 'About', path: '/about' },
   { label: 'Contact', path: '/contact' },
-  { label: 'Admin', path: '/admin' },
 ];
 
 export const FOCUS_AREAS: FocusArea[] = [

@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -11,7 +11,10 @@ import Research from './pages/Research';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import AdminLogin from './pages/AdminLogin';
+import ProtectedRoute from './components/ProtectedRoute';
 import { GlobalProvider } from './context/GlobalContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -39,21 +42,28 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const App: React.FC = () => {
   return (
     <GlobalProvider>
-      <Router>
-        <ScrollToTop />
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/focus-areas" element={<FocusAreas />} />
-            <Route path="/research" element={<Research />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/founder" element={<Founder />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin/*" element={<Admin />} />
-          </Routes>
-        </Layout>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <ScrollToTop />
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/focus-areas" element={<FocusAreas />} />
+              <Route path="/research" element={<Research />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/founder" element={<Founder />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/*" element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthProvider>
     </GlobalProvider>
   );
 };
