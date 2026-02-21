@@ -109,21 +109,28 @@ const FocusAreasSection: React.FC = () => {
   );
 };
 
+const CTASection: React.FC = () => {
+  const { content } = useGlobalContext();
+  return (
+    <section className="py-32 px-6 bg-brand-dark text-white overflow-hidden relative">
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <h2 className="text-5xl font-black mb-10 tracking-tight uppercase">{content.homeCTA.title}</h2>
+        <p className="text-xl text-zinc-400 mb-16 font-medium">{content.homeCTA.description}</p>
+        <Link to="/contact" className="bg-brand-accent text-white px-12 py-6 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white hover:text-brand-dark transition-all duration-500 inline-block shadow-2xl shadow-brand-accent/20">
+          {content.homeCTA.buttonText}
+        </Link>
+      </div>
+    </section>
+  );
+};
+
 const Home: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-700">
       <Hero />
       <Overview />
       <FocusAreasSection />
-      <section className="py-32 px-6 bg-brand-dark text-white overflow-hidden relative">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-5xl font-black mb-10 tracking-tight uppercase">Ready to explore the next frontier of digital intelligence?</h2>
-          <p className="text-xl text-zinc-400 mb-16 font-medium">We partner with forward-thinking organizations on research-based innovation projects and strategic transformations.</p>
-          <Link to="/contact" className="bg-brand-accent text-white px-12 py-6 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white hover:text-brand-dark transition-all duration-500 inline-block shadow-2xl shadow-brand-accent/20">
-            Start a Collaboration
-          </Link>
-        </div>
-      </section>
+      <CTASection />
     </div>
   );
 };

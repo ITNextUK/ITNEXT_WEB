@@ -229,14 +229,14 @@ const Blog: React.FC = () => {
           <div className="max-w-4xl">
             <div className="flex items-center justify-center space-x-4 mb-10">
               <div className="w-16 h-[1px] bg-brand-accent"></div>
-              <span className="text-brand-accent text-[11px] font-black uppercase tracking-[0.5em]">Research Repository v3.0</span>
+              <span className="text-brand-accent text-[11px] font-black uppercase tracking-[0.5em]">{content.blogPage.hero.eyebrow}</span>
               <div className="w-16 h-[1px] bg-brand-accent"></div>
             </div>
             <h1 className="text-4xl lg:text-6xl font-black text-brand-dark leading-[1.1] mb-10 tracking-tighter">
-              Strategic Journal
+              {content.blogPage.hero.title}
             </h1>
             <p className="text-xl lg:text-2xl text-zinc-500 leading-relaxed font-medium mx-auto max-w-2xl mb-20 italic">
-              Empirical technical deconstructions, algorithmic analysis, and enterprise operating models from the ITNEXT Laboratory.
+              {content.blogPage.hero.description}
             </p>
 
             <div className="flex flex-col items-center space-y-12">
@@ -380,10 +380,10 @@ const Blog: React.FC = () => {
          <div className="max-w-5xl mx-auto text-center relative z-10">
            <div className="inline-flex items-center space-x-3 mb-12">
              <div className="w-12 h-12 bg-brand-accent text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-brand-accent/40"><Mail size={24} /></div>
-             <span className="text-brand-accent text-[11px] font-black uppercase tracking-[0.5em]">Global Syndication</span>
+             <span className="text-brand-accent text-[11px] font-black uppercase tracking-[0.5em]">{content.blogPage.newsletter.eyebrow}</span>
            </div>
-           <h2 className="text-5xl lg:text-7xl font-black text-white uppercase tracking-tighter mb-10 leading-none">The Intelligence Network</h2>
-           <p className="text-2xl text-zinc-400 mb-16 max-w-2xl mx-auto leading-relaxed">Join 1,200+ technology leaders receiving our monthly primary research nodes and digital operating models.</p>
+           <h2 className="text-5xl lg:text-7xl font-black text-white uppercase tracking-tighter mb-10 leading-none">{content.blogPage.newsletter.title}</h2>
+           <p className="text-2xl text-zinc-400 mb-16 max-w-2xl mx-auto leading-relaxed">{content.blogPage.newsletter.description}</p>
            
            {!subscribed ? (
              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-6 max-w-2xl mx-auto">
@@ -402,7 +402,7 @@ const Blog: React.FC = () => {
                 <p className="text-zinc-500 font-medium">You have been indexed in our high-priority intelligence feed.</p>
              </div>
            )}
-           <p className="mt-12 text-[9px] font-black text-zinc-600 uppercase tracking-widest">Respecting intellectual privacy. Single-click decommissioning available.</p>
+           <p className="mt-12 text-[9px] font-black text-zinc-600 uppercase tracking-widest">{content.blogPage.newsletter.privacy}</p>
          </div>
          
          {/* Decorative Grid */}
@@ -416,14 +416,14 @@ const Blog: React.FC = () => {
 
       <section className="py-20 px-6 lg:px-12 bg-zinc-50 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-center lg:justify-between items-center gap-16">
-          {[
-            { label: "Active Nodes", icon: <Database size={18} />, val: "148 ANALYSES" },
-            { label: "Lab Rigor", icon: <Activity size={18} />, val: "PEER REVIEWED" },
-            { label: "Intelligence Origin", icon: <Globe size={18} />, val: "UK / EU SECTORS" },
-            { label: "Dissemination", icon: <Share2 size={18} />, val: "MONTHLY SYNC" }
-          ].map((stat, i) => (
+          {content.blogPage.stats.map((stat, i) => (
             <div key={i} className="flex items-center space-x-6 group">
-              <div className="w-12 h-12 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:text-brand-accent group-hover:border-brand-accent transition-all duration-500 shadow-sm">{stat.icon}</div>
+              <div className="w-12 h-12 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:text-brand-accent group-hover:border-brand-accent transition-all duration-500 shadow-sm">
+                {i === 0 && <Database size={18} />}
+                {i === 1 && <Activity size={18} />}
+                {i === 2 && <Globe size={18} />}
+                {i === 3 && <Share2 size={18} />}
+              </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">{stat.label}</span>
                 <span className="text-xs font-black text-brand-dark uppercase tracking-widest">{stat.val}</span>

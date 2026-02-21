@@ -229,6 +229,12 @@ const HomeEditor = () => {
             <InputField label="Stat Label" value={content.overview.statLabel} onChange={(v) => updateContent({ overview: { ...content.overview, statLabel: v } })} />
           </div>
         </div>
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Bottom CTA Section Configuration</h3>
+          <InputField label="CTA Title" value={content.homeCTA.title} onChange={(v) => updateContent({ homeCTA: { ...content.homeCTA, title: v } })} />
+          <InputField label="CTA Description" type="textarea" value={content.homeCTA.description} onChange={(v) => updateContent({ homeCTA: { ...content.homeCTA, description: v } })} />
+          <InputField label="CTA Button Text" value={content.homeCTA.buttonText} onChange={(v) => updateContent({ homeCTA: { ...content.homeCTA, buttonText: v } })} />
+        </div>
       </div>
     </div>
   );
@@ -505,6 +511,268 @@ const ContactEditor = () => {
           <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Mandate & Mission</h3>
           <InputField label="Mandate Title" value={content.contact.mandate.title} onChange={(v) => updateContent({ contact: { ...content.contact, mandate: { ...content.contact.mandate, title: v } } })} />
           <InputField label="Mandate Quote" type="textarea" value={content.contact.mandateQuote} onChange={(v) => updateContent({ contact: { ...content.contact, mandateQuote: v } })} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FocusAreasEditor = () => {
+  const { content, updateContent } = useGlobalContext();
+  const [saved, setSaved] = useState(false);
+  
+  const handleSave = () => {
+    updateContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const addFrameworkItem = () => {
+    const updated = {
+      ...content.focusAreasPage,
+      framework: {
+        ...content.focusAreasPage.framework,
+        items: [...content.focusAreasPage.framework.items, { title: 'New Item', desc: 'Description here...' }]
+      }
+    };
+    updateContent({ focusAreasPage: updated });
+  };
+
+  const removeFrameworkItem = (idx: number) => {
+    const updated = {
+      ...content.focusAreasPage,
+      framework: {
+        ...content.focusAreasPage.framework,
+        items: content.focusAreasPage.framework.items.filter((_, i) => i !== idx)
+      }
+    };
+    updateContent({ focusAreasPage: updated });
+  };
+
+  const updateFrameworkItem = (idx: number, field: 'title' | 'desc', val: string) => {
+    const updatedItems = [...content.focusAreasPage.framework.items];
+    updatedItems[idx] = { ...updatedItems[idx], [field]: val };
+    const updated = {
+      ...content.focusAreasPage,
+      framework: {
+        ...content.focusAreasPage.framework,
+        items: updatedItems
+      }
+    };
+    updateContent({ focusAreasPage: updated });
+  };
+
+  return (
+    <div className="animate-in fade-in duration-500">
+      <SectionHeader title="Focus Areas Page Manager" onSave={handleSave} saved={saved} />
+      <div className="space-y-12">
+        {/* Hero Section */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Hero Section</h3>
+          <InputField 
+            label="Hero Eyebrow" 
+            value={content.focusAreasPage.hero.eyebrow} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, hero: { ...content.focusAreasPage.hero, eyebrow: v } } })} 
+          />
+          <InputField 
+            label="Hero Title" 
+            value={content.focusAreasPage.hero.title} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, hero: { ...content.focusAreasPage.hero, title: v } } })} 
+          />
+          <InputField 
+            label="Hero Description" 
+            type="textarea" 
+            value={content.focusAreasPage.hero.description} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, hero: { ...content.focusAreasPage.hero, description: v } } })} 
+          />
+        </div>
+
+        {/* Framework Section */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Strategic Framework Section</h3>
+          <InputField 
+            label="Framework Title" 
+            value={content.focusAreasPage.framework.title} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, framework: { ...content.focusAreasPage.framework, title: v } } })} 
+          />
+          <InputField 
+            label="Framework Description" 
+            type="textarea" 
+            value={content.focusAreasPage.framework.description} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, framework: { ...content.focusAreasPage.framework, description: v } } })} 
+          />
+          <InputField 
+            label="Framework Quote" 
+            type="textarea" 
+            value={content.focusAreasPage.framework.quote} 
+            onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, framework: { ...content.focusAreasPage.framework, quote: v } } })} 
+          />
+        </div>
+
+        {/* Framework Items */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Target size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Framework Items</h3>
+            </div>
+            <button onClick={addFrameworkItem} className="text-brand-accent hover:text-brand-dark transition-colors">
+              <PlusCircle size={20} />
+            </button>
+          </div>
+          <div className="space-y-6">
+            {content.focusAreasPage.framework.items.map((item, i) => (
+              <div key={i} className="p-6 bg-zinc-50 rounded-2xl relative group">
+                <button 
+                  onClick={() => removeFrameworkItem(i)} 
+                  className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <X size={12} />
+                </button>
+                <div className="space-y-4">
+                  <InputField 
+                    label={`Item ${i + 1} - Title`} 
+                    value={item.title} 
+                    onChange={(v: string) => updateFrameworkItem(i, 'title', v)} 
+                  />
+                  <InputField 
+                    label={`Item ${i + 1} - Description`} 
+                    type="textarea"
+                    value={item.desc} 
+                    onChange={(v: string) => updateFrameworkItem(i, 'desc', v)} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BlogPageEditor = () => {
+  const { content, updateContent } = useGlobalContext();
+  const [saved, setSaved] = useState(false);
+  
+  const handleSave = () => {
+    updateContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const addStat = () => {
+    const updated = {
+      ...content.blogPage,
+      stats: [...content.blogPage.stats, { label: 'New Stat', val: 'VALUE' }]
+    };
+    updateContent({ blogPage: updated });
+  };
+
+  const removeStat = (idx: number) => {
+    const updated = {
+      ...content.blogPage,
+      stats: content.blogPage.stats.filter((_, i) => i !== idx)
+    };
+    updateContent({ blogPage: updated });
+  };
+
+  const updateStat = (idx: number, field: 'label' | 'val', val: string) => {
+    const updatedStats = [...content.blogPage.stats];
+    updatedStats[idx] = { ...updatedStats[idx], [field]: val };
+    const updated = {
+      ...content.blogPage,
+      stats: updatedStats
+    };
+    updateContent({ blogPage: updated });
+  };
+
+  return (
+    <div className="animate-in fade-in duration-500">
+      <SectionHeader title="Blog Page Configuration" onSave={handleSave} saved={saved} />
+      <div className="space-y-12">
+        {/* Hero Section */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Hero Section</h3>
+          <InputField 
+            label="Hero Eyebrow" 
+            value={content.blogPage.hero.eyebrow} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, hero: { ...content.blogPage.hero, eyebrow: v } } })} 
+          />
+          <InputField 
+            label="Hero Title" 
+            value={content.blogPage.hero.title} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, hero: { ...content.blogPage.hero, title: v } } })} 
+          />
+          <InputField 
+            label="Hero Description" 
+            type="textarea" 
+            value={content.blogPage.hero.description} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, hero: { ...content.blogPage.hero, description: v } } })} 
+          />
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Newsletter Section</h3>
+          <InputField 
+            label="Newsletter Eyebrow" 
+            value={content.blogPage.newsletter.eyebrow} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, newsletter: { ...content.blogPage.newsletter, eyebrow: v } } })} 
+          />
+          <InputField 
+            label="Newsletter Title" 
+            value={content.blogPage.newsletter.title} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, newsletter: { ...content.blogPage.newsletter, title: v } } })} 
+          />
+          <InputField 
+            label="Newsletter Description" 
+            type="textarea" 
+            value={content.blogPage.newsletter.description} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, newsletter: { ...content.blogPage.newsletter, description: v } } })} 
+          />
+          <InputField 
+            label="Privacy Notice" 
+            value={content.blogPage.newsletter.privacy} 
+            onChange={(v: string) => updateContent({ blogPage: { ...content.blogPage, newsletter: { ...content.blogPage.newsletter, privacy: v } } })} 
+          />
+        </div>
+
+        {/* Stats Section */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <BarChart4 size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Blog Statistics (Footer)</h3>
+            </div>
+            <button onClick={addStat} className="text-brand-accent hover:text-brand-dark transition-colors">
+              <PlusCircle size={20} />
+            </button>
+          </div>
+          <div className="space-y-6">
+            {content.blogPage.stats.map((stat, i) => (
+              <div key={i} className="p-6 bg-zinc-50 rounded-2xl relative group">
+                <button 
+                  onClick={() => removeStat(i)} 
+                  className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <X size={12} />
+                </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField 
+                    label={`Stat ${i + 1} - Label`} 
+                    value={stat.label} 
+                    onChange={(v: string) => updateStat(i, 'label', v)} 
+                  />
+                  <InputField 
+                    label={`Stat ${i + 1} - Value`} 
+                    value={stat.val} 
+                    onChange={(v: string) => updateStat(i, 'val', v)} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -1035,7 +1303,9 @@ const Admin: React.FC = () => {
   const menuItems = [
     { label: 'Intelligence Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
     { label: 'Site Hero Console', path: '/admin/home', icon: <HomeIcon size={18} /> },
+    { label: 'Focus Areas Manager', path: '/admin/focus-areas', icon: <Target size={18} /> },
     { label: 'Strategic Journal', path: '/admin/blog', icon: <BookOpen size={18} /> },
+    { label: 'Blog Page Settings', path: '/admin/blog-page', icon: <FileText size={18} /> },
     { label: 'Leadership Profile', path: '/admin/founder', icon: <Users size={18} /> },
     { label: 'Mission & Vision', path: '/admin/about', icon: <Info size={18} /> },
     { label: 'Methodology Lab', path: '/admin/research', icon: <Layers size={18} /> },
@@ -1091,7 +1361,9 @@ const Admin: React.FC = () => {
           <Routes>
             <Route path="/dashboard" element={<DashboardHome />} />
             <Route path="/home" element={<HomeEditor />} />
+            <Route path="/focus-areas" element={<FocusAreasEditor />} />
             <Route path="/blog" element={<BlogEditor />} />
+            <Route path="/blog-page" element={<BlogPageEditor />} />
             <Route path="/founder" element={<FounderEditor />} />
             <Route path="/about" element={<AboutEditor />} />
             <Route path="/research" element={<ResearchEditor />} />

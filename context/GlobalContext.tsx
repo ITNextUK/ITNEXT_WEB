@@ -44,6 +44,47 @@ const DEFAULT_CONTENT: SiteContent = {
     statValue: "18+",
     statLabel: "Years Experience"
   },
+  homeCTA: {
+    title: "Ready to explore the next frontier of digital intelligence?",
+    description: "We partner with forward-thinking organizations on research-based innovation projects and strategic transformations.",
+    buttonText: "Start a Collaboration"
+  },
+  focusAreasPage: {
+    hero: {
+      eyebrow: "Execution Architecture",
+      title: "Core Capabilities",
+      description: "We deconstruct complex digital challenges into high-performance architectural pillars. Our approach translates exploratory innovation into resilient, enterprise-grade systems."
+    },
+    framework: {
+      title: "Applied Technical Rigor",
+      description: "Our methodology prioritizes long-term resilience over immediate convenience. We build systems that are designed to evolve with the rapid pace of AI and data science.",
+      items: [
+        { title: "Empirical Design", desc: "Every architectural decision is backed by research and data-driven proof-of-concepts." },
+        { title: "Scalable Logic", desc: "Building modular frameworks that handle industrial loads and multi-region deployment." },
+        { title: "Risk-First Security", desc: "Integrating defensive measures at the foundation of the digital infrastructure." }
+      ],
+      quote: "ITNEXT capabilities are the fundamental building blocks of a resilient, intelligence-driven enterprise operating model."
+    }
+  },
+  blogPage: {
+    hero: {
+      eyebrow: "Research Repository v3.0",
+      title: "Strategic Journal",
+      description: "Empirical technical deconstructions, algorithmic analysis, and enterprise operating models from the ITNEXT Laboratory."
+    },
+    newsletter: {
+      eyebrow: "Global Syndication",
+      title: "The Intelligence Network",
+      description: "Join 1,200+ technology leaders receiving our monthly primary research nodes and digital operating models.",
+      privacy: "Respecting intellectual privacy. Single-click decommissioning available."
+    },
+    stats: [
+      { label: "Active Nodes", val: "148 ANALYSES" },
+      { label: "Lab Rigor", val: "PEER REVIEWED" },
+      { label: "Intelligence Origin", val: "UK / EU SECTORS" },
+      { label: "Dissemination", val: "MONTHLY SYNC" }
+    ]
+  },
   focusAreas: FOCUS_AREAS,
   products: [
     {
@@ -153,7 +194,35 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [content, setContent] = useState<SiteContent>(() => {
     const saved = localStorage.getItem('itnext_content');
-    return saved ? JSON.parse(saved) : DEFAULT_CONTENT;
+    if (saved) {
+      try {
+        const parsedContent = JSON.parse(saved);
+        // Merge with defaults to ensure all properties exist (for backward compatibility)
+        return {
+          ...DEFAULT_CONTENT,
+          ...parsedContent,
+          hero: { ...DEFAULT_CONTENT.hero, ...parsedContent.hero },
+          overview: { ...DEFAULT_CONTENT.overview, ...parsedContent.overview },
+          homeCTA: parsedContent.homeCTA || DEFAULT_CONTENT.homeCTA,
+          focusAreasPage: parsedContent.focusAreasPage ? {
+            hero: { ...DEFAULT_CONTENT.focusAreasPage.hero, ...parsedContent.focusAreasPage.hero },
+            framework: { ...DEFAULT_CONTENT.focusAreasPage.framework, ...parsedContent.focusAreasPage.framework }
+          } : DEFAULT_CONTENT.focusAreasPage,
+          blogPage: parsedContent.blogPage ? {
+            hero: { ...DEFAULT_CONTENT.blogPage.hero, ...parsedContent.blogPage.hero },
+            newsletter: { ...DEFAULT_CONTENT.blogPage.newsletter, ...parsedContent.blogPage.newsletter },
+            stats: parsedContent.blogPage.stats || DEFAULT_CONTENT.blogPage.stats
+          } : DEFAULT_CONTENT.blogPage,
+          founder: { ...DEFAULT_CONTENT.founder, ...parsedContent.founder },
+          about: { ...DEFAULT_CONTENT.about, ...parsedContent.about },
+          research: { ...DEFAULT_CONTENT.research, ...parsedContent.research },
+          contact: { ...DEFAULT_CONTENT.contact, ...parsedContent.contact },
+        };
+      } catch (e) {
+        return DEFAULT_CONTENT;
+      }
+    }
+    return DEFAULT_CONTENT;
   });
 
   useEffect(() => {

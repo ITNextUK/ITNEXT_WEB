@@ -30,15 +30,14 @@ const FocusAreas: React.FC = () => {
           <div className="max-w-3xl">
             <div className="flex items-center justify-center space-x-3 mb-8">
               <div className="w-12 h-[1px] bg-brand-accent"></div>
-              <span className="text-brand-accent text-[10px] font-black uppercase tracking-[0.4em]">Execution Architecture</span>
+              <span className="text-brand-accent text-[10px] font-black uppercase tracking-[0.4em]">{content.focusAreasPage.hero.eyebrow}</span>
               <div className="w-12 h-[1px] bg-brand-accent"></div>
             </div>
             <h1 className="text-4xl lg:text-6xl font-black text-brand-dark leading-[1.1] mb-10 tracking-tighter">
-              Core Capabilities
+              {content.focusAreasPage.hero.title}
             </h1>
             <p className="text-xl text-zinc-500 leading-relaxed font-medium mx-auto">
-              We deconstruct complex digital challenges into high-performance architectural pillars. 
-              Our approach translates exploratory innovation into resilient, enterprise-grade systems.
+              {content.focusAreasPage.hero.description}
             </p>
           </div>
         </div>
@@ -102,17 +101,13 @@ const FocusAreas: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
             <div>
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-accent mb-6">Strategic Framework</h2>
-              <h3 className="text-4xl font-black text-brand-dark mb-10 tracking-tight uppercase">Applied Technical Rigor</h3>
+              <h3 className="text-4xl font-black text-brand-dark mb-10 tracking-tight uppercase">{content.focusAreasPage.framework.title}</h3>
               <p className="text-lg text-zinc-500 leading-relaxed mb-12 font-medium">
-                Our methodology prioritizes long-term resilience over immediate convenience. We build systems that are designed to evolve with the rapid pace of AI and data science.
+                {content.focusAreasPage.framework.description}
               </p>
               
               <div className="space-y-8">
-                {[
-                  { title: "Empirical Design", desc: "Every architectural decision is backed by research and data-driven proof-of-concepts." },
-                  { title: "Scalable Logic", desc: "Building modular frameworks that handle industrial loads and multi-region deployment." },
-                  { title: "Risk-First Security", desc: "Integrating defensive measures at the foundation of the digital infrastructure." }
-                ].map((item, i) => (
+                {content.focusAreasPage.framework.items.map((item, i) => (
                   <div key={i} className="flex gap-6">
                     <div className="flex-shrink-0 w-10 h-10 border border-zinc-200 rounded-full flex items-center justify-center text-brand-accent font-bold text-xs">
                       {i + 1}
@@ -129,7 +124,7 @@ const FocusAreas: React.FC = () => {
             <div className="bg-brand-dark rounded-[3rem] p-12 lg:p-20 text-white relative overflow-hidden flex flex-col justify-center">
               <div className="relative z-10">
                 <blockquote className="text-2xl lg:text-3xl font-medium leading-tight mb-12 italic text-zinc-300">
-                  "ITNEXT capabilities are the fundamental building blocks of a resilient, intelligence-driven enterprise operating model."
+                  "{content.focusAreasPage.framework.quote}"
                 </blockquote>
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-[1px] bg-brand-accent"></div>

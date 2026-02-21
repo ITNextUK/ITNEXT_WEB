@@ -90,6 +90,38 @@ export interface SiteContent {
     statValue: string;
     statLabel: string;
   };
+  homeCTA: {
+    title: string;
+    description: string;
+    buttonText: string;
+  };
+  focusAreasPage: {
+    hero: {
+      eyebrow: string;
+      title: string;
+      description: string;
+    };
+    framework: {
+      title: string;
+      description: string;
+      items: { title: string; desc: string; }[];
+      quote: string;
+    };
+  };
+  blogPage: {
+    hero: {
+      eyebrow: string;
+      title: string;
+      description: string;
+    };
+    newsletter: {
+      eyebrow: string;
+      title: string;
+      description: string;
+      privacy: string;
+    };
+    stats: { label: string; val: string; }[];
+  };
   focusAreas: FocusArea[];
   products: ResearchProduct[];
   insights: InsightPost[];
