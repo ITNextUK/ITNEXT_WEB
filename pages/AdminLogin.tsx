@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Lock, Mail, AlertCircle, Loader } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,14 @@ const AdminLogin: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
+
+  // If already authenticated, redirect straight to dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      window.location.hash = '#/admin/dashboard';
+    }
+  }, [isAuthenticated, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +27,10 @@ const AdminLogin: React.FC = () => {
     try {
       const success = await login(email, password);
       
-      if (success) {
-        navigate('/admin/dashboard');
-      } else {
+      if (!success) {
         setError('Invalid email or password');
       }
+      // Navigation is handled by the useEffect below once isAuthenticated becomes true
     } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {

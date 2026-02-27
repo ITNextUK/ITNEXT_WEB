@@ -14,6 +14,7 @@ const contentRoutes = require('./routes/content.routes');
 const insightRoutes = require('./routes/insight.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const authRoutes = require('./routes/auth.routes');
+const newsletterRoutes = require('./routes/newsletter.routes');
 
 // Middleware
 app.use(helmet()); // Security headers
@@ -52,6 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/insights', insightRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // 404 handler
 app.use((req, res) => {
