@@ -1,11 +1,12 @@
 import React from 'react';
 import { Linkedin, Award, BookOpen, GraduationCap, Mail, Globe, Shield, Zap, Phone } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
-import founderImage from '../assets/1755347681490 (1).jpg';
+import founderImageFallback from '../assets/1755347681490 (1).jpg';
 
 const Founder: React.FC = () => {
   const { content } = useGlobalContext();
   const { founder } = content;
+  const founderImage = founder.image || founderImageFallback;
   
   return (
     <div className="pb-0 bg-white animate-in fade-in duration-700">

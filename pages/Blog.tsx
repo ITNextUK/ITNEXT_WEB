@@ -411,6 +411,7 @@ const Blog: React.FC = () => {
              {subscribeError && <p className="mt-4 text-red-400 text-xs font-bold uppercase tracking-widest">{subscribeError}</p>}
              </>
            ) : (
+             <div className="flex flex-col items-center animate-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-green-500/40"><CheckCircle2 size={40} /></div>
                 <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-4">Transmission Successful</h3>
                 <p className="text-zinc-500 font-medium">You have been indexed in our high-priority intelligence feed.</p>

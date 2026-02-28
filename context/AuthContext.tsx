@@ -40,7 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         })
         .catch(() => {
-          // Token invalid/expired — clear session
+          // Token invalid/expired — clear session silently
+          console.info('[Auth] Session expired or token invalid — please log in again.');
           setToken(null);
           setUser(null);
           setIsAuthenticated(false);

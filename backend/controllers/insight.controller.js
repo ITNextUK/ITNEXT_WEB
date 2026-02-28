@@ -1,4 +1,7 @@
+const mongoose = require('mongoose');
 const InsightPost = require('../models/InsightPost.model');
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id) && /^[a-f\d]{24}$/i.test(id);
 
 // @desc    Get all insights (published only for public)
 // @route   GET /api/insights
@@ -99,6 +102,10 @@ exports.createInsight = async (req, res, next) => {
 // @access  Private
 exports.updateInsight = async (req, res, next) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ status: 'error', message: 'Invalid insight ID format' });
+    }
+
     const insight = await InsightPost.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -126,6 +133,10 @@ exports.updateInsight = async (req, res, next) => {
 // @access  Private/Admin
 exports.deleteInsight = async (req, res, next) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ status: 'error', message: 'Invalid insight ID format' });
+    }
+
     const insight = await InsightPost.findByIdAndDelete(req.params.id);
 
     if (!insight) {

@@ -201,6 +201,10 @@ function normaliseInsight(doc: any): InsightPost {
     ...doc,
     id: doc._id || doc.id,
     date: doc.date || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : ''),
+    body: (doc.body || []).map((block: any, i: number) => ({
+      ...block,
+      id: block._id || block.id || `block-${i}`,
+    })),
   };
 }
 
@@ -317,30 +321,39 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // ── Upsert insight post ───────────────────────────────────────────────
 
+  const isMongoId = (id: string) => /^[a-f\d]{24}$/i.test(id);
+
   const upsertPost = async (post: InsightPost) => {
     const prev = content;
-    const exists = prev.insights.find(p => p.id === post.id);
-    const updatedInsights = exists
-      ? prev.insights.map(p => p.id === post.id ? post : p)
+    const tempId = post.id; // may be a client-side timestamp id
+    const existsInBackend = isMongoId(tempId);
+
+    // Optimistic local update
+    const existsLocally = prev.insights.find(p => p.id === tempId);
+    const updatedInsights = existsLocally
+      ? prev.insights.map(p => p.id === tempId ? post : p)
       : [post, ...prev.insights];
     const next = { ...prev, insights: updatedInsights };
     setContent(next);
     persistToLocalStorage(next);
 
     try {
-      if (exists) {
-        const res = await insightsApi.update(post.id, post);
+      if (existsInBackend) {
+        // Real MongoDB document — update in place
+        const res = await insightsApi.update(tempId, post);
         const savedPost = normaliseInsight(res.data?.insight || post);
         setContent(c => ({
           ...c,
-          insights: c.insights.map(p => p.id === post.id ? savedPost : p)
+          insights: c.insights.map(p => p.id === tempId ? savedPost : p)
         }));
       } else {
+        // New post (client-side id) — always create
         const res = await insightsApi.create(post);
         const savedPost = normaliseInsight(res.data?.insight || post);
+        // Replace the temp-id entry with the real MongoDB entry
         setContent(c => ({
           ...c,
-          insights: c.insights.map(p => p.id === post.id ? savedPost : p)
+          insights: c.insights.map(p => p.id === tempId ? savedPost : p)
         }));
       }
     } catch (err: any) {
@@ -357,7 +370,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     persistToLocalStorage(next);
 
     try {
-      await insightsApi.delete(id);
+      if (isMongoId(id)) {
+        await insightsApi.delete(id);
+      }
     } catch (err: any) {
       console.error('Failed to delete insight from backend:', err.message);
     }
