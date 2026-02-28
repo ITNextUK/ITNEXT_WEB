@@ -524,20 +524,141 @@ const AboutEditor = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  const updatePillar = (idx: number, field: string, val: any) => {
+    const updated = [...content.about.pillars];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ about: { ...content.about, pillars: updated } });
+  };
+
+  const addPillar = () => {
+    const newPillar = { id: Date.now().toString(), title: 'New Pillar', desc: 'Description...', details: ['Detail 1'] };
+    updateContent({ about: { ...content.about, pillars: [...content.about.pillars, newPillar] } });
+  };
+
+  const removePillar = (idx: number) => {
+    updateContent({ about: { ...content.about, pillars: content.about.pillars.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const addPillarDetail = (pillarIdx: number) => {
+    const updated = [...content.about.pillars];
+    updated[pillarIdx] = { ...updated[pillarIdx], details: [...updated[pillarIdx].details, 'New Detail'] };
+    updateContent({ about: { ...content.about, pillars: updated } });
+  };
+
+  const removePillarDetail = (pillarIdx: number, detailIdx: number) => {
+    const updated = [...content.about.pillars];
+    updated[pillarIdx] = { ...updated[pillarIdx], details: updated[pillarIdx].details.filter((_: any, i: number) => i !== detailIdx) };
+    updateContent({ about: { ...content.about, pillars: updated } });
+  };
+
+  const updatePillarDetail = (pillarIdx: number, detailIdx: number, val: string) => {
+    const updated = [...content.about.pillars];
+    const details = [...updated[pillarIdx].details];
+    details[detailIdx] = val;
+    updated[pillarIdx] = { ...updated[pillarIdx], details };
+    updateContent({ about: { ...content.about, pillars: updated } });
+  };
+
+  const addAlignmentItem = () => {
+    updateContent({ about: { ...content.about, alignmentItems: [...content.about.alignmentItems, { title: 'New Item', desc: 'Description...' }] } });
+  };
+
+  const removeAlignmentItem = (idx: number) => {
+    updateContent({ about: { ...content.about, alignmentItems: content.about.alignmentItems.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const updateAlignmentItem = (idx: number, field: 'title' | 'desc', val: string) => {
+    const updated = [...content.about.alignmentItems];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ about: { ...content.about, alignmentItems: updated } });
+  };
+
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 pb-32">
       <SectionHeader title="Mission & Vision Editor" onSave={handleSave} saved={saved} />
       <div className="space-y-12">
+        {/* Hero Section */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
-          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">About Hero</h3>
+          <div className="flex items-center space-x-3 mb-4 text-brand-accent">
+            <Target size={20} />
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">About Hero</h3>
+          </div>
           <InputField label="Hero Title" value={content.about.hero.title} onChange={(v) => updateContent({ about: { ...content.about, hero: { ...content.about.hero, title: v } } })} />
           <InputField label="Hero Description" type="textarea" value={content.about.hero.description} onChange={(v) => updateContent({ about: { ...content.about, hero: { ...content.about.hero, description: v } } })} />
         </div>
+
+        {/* Value Pillars */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
-          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Strategy & Vision</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Layers size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Value Pillars</h3>
+            </div>
+            <button onClick={addPillar} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-8">
+            {content.about.pillars.map((pillar, i) => (
+              <div key={pillar.id || i} className="p-8 bg-zinc-50 rounded-3xl relative group border border-zinc-100">
+                <button onClick={() => removePillar(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-6">
+                  <InputField label={`Pillar ${i + 1} — Title`} value={pillar.title} onChange={(v: string) => updatePillar(i, 'title', v)} />
+                  <InputField label="Description" type="textarea" rows={2} value={pillar.desc} onChange={(v: string) => updatePillar(i, 'desc', v)} />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Details / Tags</span>
+                      <button onClick={() => addPillarDetail(i)} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={16} /></button>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {pillar.details.map((detail, di) => (
+                        <div key={di} className="flex items-center space-x-2 bg-white border border-zinc-200 rounded-xl px-4 py-2 group/tag">
+                          <input
+                            className="bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase tracking-widest text-zinc-600 w-36"
+                            value={detail}
+                            onChange={(e) => updatePillarDetail(i, di, e.target.value)}
+                          />
+                          <button onClick={() => removePillarDetail(i, di)} className="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover/tag:opacity-100"><X size={12} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Strategic Alignment */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center space-x-3 mb-4 text-brand-accent">
+            <Globe size={20} />
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Strategy & Vision</h3>
+          </div>
           <InputField label="Alignment Title" value={content.about.alignment.title} onChange={(v) => updateContent({ about: { ...content.about, alignment: { ...content.about.alignment, title: v } } })} />
           <InputField label="Alignment Description" type="textarea" value={content.about.alignment.description} onChange={(v) => updateContent({ about: { ...content.about, alignment: { ...content.about.alignment, description: v } } })} />
           <InputField label="Vision Quote" type="textarea" value={content.about.visionQuote} onChange={(v) => updateContent({ about: { ...content.about, visionQuote: v } })} />
+        </div>
+
+        {/* Alignment Items */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <List size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Alignment Items</h3>
+            </div>
+            <button onClick={addAlignmentItem} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-6">
+            {content.about.alignmentItems.map((item, i) => (
+              <div key={i} className="p-6 bg-zinc-50 rounded-2xl relative group border border-zinc-100">
+                <button onClick={() => removeAlignmentItem(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-4">
+                  <InputField label={`Item ${i + 1} — Title`} value={item.title} onChange={(v: string) => updateAlignmentItem(i, 'title', v)} />
+                  <InputField label="Description" type="textarea" rows={2} value={item.desc} onChange={(v: string) => updateAlignmentItem(i, 'desc', v)} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -580,19 +701,140 @@ const ContactEditor = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  const updateChannel = (idx: number, field: string, val: any) => {
+    const updated = [...content.contact.channels];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ contact: { ...content.contact, channels: updated } });
+  };
+
+  const addChannel = () => {
+    const newChannel = { id: Date.now().toString(), title: 'New Channel', desc: 'Description...', details: ['Detail 1'] };
+    updateContent({ contact: { ...content.contact, channels: [...content.contact.channels, newChannel] } });
+  };
+
+  const removeChannel = (idx: number) => {
+    updateContent({ contact: { ...content.contact, channels: content.contact.channels.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const addChannelDetail = (chIdx: number) => {
+    const updated = [...content.contact.channels];
+    updated[chIdx] = { ...updated[chIdx], details: [...updated[chIdx].details, 'New Detail'] };
+    updateContent({ contact: { ...content.contact, channels: updated } });
+  };
+
+  const removeChannelDetail = (chIdx: number, detailIdx: number) => {
+    const updated = [...content.contact.channels];
+    updated[chIdx] = { ...updated[chIdx], details: updated[chIdx].details.filter((_: any, i: number) => i !== detailIdx) };
+    updateContent({ contact: { ...content.contact, channels: updated } });
+  };
+
+  const updateChannelDetail = (chIdx: number, detailIdx: number, val: string) => {
+    const updated = [...content.contact.channels];
+    const details = [...updated[chIdx].details];
+    details[detailIdx] = val;
+    updated[chIdx] = { ...updated[chIdx], details };
+    updateContent({ contact: { ...content.contact, channels: updated } });
+  };
+
+  const addMandateItem = () => {
+    updateContent({ contact: { ...content.contact, mandateItems: [...content.contact.mandateItems, { title: 'New Item', desc: 'Description...' }] } });
+  };
+
+  const removeMandateItem = (idx: number) => {
+    updateContent({ contact: { ...content.contact, mandateItems: content.contact.mandateItems.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const updateMandateItem = (idx: number, field: 'title' | 'desc', val: string) => {
+    const updated = [...content.contact.mandateItems];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ contact: { ...content.contact, mandateItems: updated } });
+  };
+
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 pb-32">
       <SectionHeader title="Dialogue Channels Editor" onSave={handleSave} saved={saved} />
       <div className="space-y-12">
+        {/* Hero Section */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
-          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Contact Hero</h3>
+          <div className="flex items-center space-x-3 mb-4 text-brand-accent">
+            <MessageSquare size={20} />
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Contact Hero</h3>
+          </div>
           <InputField label="Hero Title" value={content.contact.hero.title} onChange={(v) => updateContent({ contact: { ...content.contact, hero: { ...content.contact.hero, title: v } } })} />
           <InputField label="Hero Description" type="textarea" value={content.contact.hero.description} onChange={(v) => updateContent({ contact: { ...content.contact, hero: { ...content.contact.hero, description: v } } })} />
         </div>
+
+        {/* Contact Channels */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
-          <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Mandate & Mission</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Layers size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Contact Channels</h3>
+            </div>
+            <button onClick={addChannel} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-8">
+            {content.contact.channels.map((channel, i) => (
+              <div key={channel.id || i} className="p-8 bg-zinc-50 rounded-3xl relative group border border-zinc-100">
+                <button onClick={() => removeChannel(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-6">
+                  <InputField label={`Channel ${i + 1} — Title`} value={channel.title} onChange={(v: string) => updateChannel(i, 'title', v)} />
+                  <InputField label="Description" type="textarea" rows={2} value={channel.desc} onChange={(v: string) => updateChannel(i, 'desc', v)} />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Details / Info</span>
+                      <button onClick={() => addChannelDetail(i)} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={16} /></button>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {channel.details.map((detail, di) => (
+                        <div key={di} className="flex items-center space-x-2 bg-white border border-zinc-200 rounded-xl px-4 py-2 group/tag">
+                          <input
+                            className="bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase tracking-widest text-zinc-600 w-40"
+                            value={detail}
+                            onChange={(e) => updateChannelDetail(i, di, e.target.value)}
+                          />
+                          <button onClick={() => removeChannelDetail(i, di)} className="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover/tag:opacity-100"><X size={12} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mandate & Mission */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center space-x-3 mb-4 text-brand-accent">
+            <Shield size={20} />
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Mandate & Mission</h3>
+          </div>
           <InputField label="Mandate Title" value={content.contact.mandate.title} onChange={(v) => updateContent({ contact: { ...content.contact, mandate: { ...content.contact.mandate, title: v } } })} />
           <InputField label="Mandate Quote" type="textarea" value={content.contact.mandateQuote} onChange={(v) => updateContent({ contact: { ...content.contact, mandateQuote: v } })} />
+        </div>
+
+        {/* Mandate Items */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Sparkles size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Mandate Items</h3>
+            </div>
+            <button onClick={addMandateItem} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-6">
+            {content.contact.mandateItems.map((item, i) => (
+              <div key={i} className="p-6 bg-zinc-50 rounded-2xl relative group border border-zinc-100">
+                <button onClick={() => removeMandateItem(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-4">
+                  <InputField label={`Item ${i + 1} — Title`} value={item.title} onChange={(v: string) => updateMandateItem(i, 'title', v)} />
+                  <InputField label="Description" type="textarea" rows={2} value={item.desc} onChange={(v: string) => updateMandateItem(i, 'desc', v)} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
