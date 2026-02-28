@@ -36,7 +36,7 @@ const insightPostSchema = new mongoose.Schema({
   },
   excerpt: {
     type: String,
-    default: ''
+    required: true
   },
   author: {
     type: String,
@@ -47,7 +47,7 @@ const insightPostSchema = new mongoose.Schema({
   tags: [String],
   featureImage: {
     type: String,
-    default: ''
+    required: true
   },
   status: {
     type: String,

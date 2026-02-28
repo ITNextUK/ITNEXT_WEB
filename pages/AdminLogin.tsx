@@ -160,7 +160,7 @@ const AdminLogin: React.FC = () => {
           {/* Development Credentials Notice */}
           <div className="mt-8 p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
             <p className="text-[9px] text-zinc-400 uppercase tracking-widest text-center font-bold">
-              Development Mode Credentials
+              Default Admin Credentials
             </p>
             <div className="mt-2 space-y-1">
               <p className="text-xs text-zinc-500 text-center font-medium">
@@ -171,7 +171,7 @@ const AdminLogin: React.FC = () => {
               </p>
             </div>
             <p className="text-[9px] text-zinc-400 mt-3 text-center italic">
-              Replace with backend authentication in production
+              Run <span className="font-mono">npm run seed</span> to create admin user in database
             </p>
           </div>
         </div>

@@ -2,9 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { FOCUS_AREAS } from '../constants';
 import { SiteContent, InsightPost } from '../types';
-import { insightsApi, contentApi } from '../services/api.service';
-
-// ─── Default Data (used when backend is unavailable) ─────────────────────────
+import { contentApi, insightsApi } from '../services/api.service';
 
 const DEFAULT_INSIGHTS: InsightPost[] = [
   {
@@ -21,7 +19,6 @@ const DEFAULT_INSIGHTS: InsightPost[] = [
     featureImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop',
     excerpt: 'A research deep-dive into the orchestration of specialized AI agents to handle non-deterministic variables in global supply chains.',
     status: 'published',
-    isFeatured: true,
     views: 1240,
     likes: 85,
     shares: 0,
@@ -30,9 +27,7 @@ const DEFAULT_INSIGHTS: InsightPost[] = [
       { id: 'b2', type: 'text', content: 'In modern supply chains, the complexity of variables often exceeds the capacity of traditional, deterministic automation.' },
       { id: 'b3', type: 'quote', content: 'True innovation in logistics is not about faster transport, but smarter decision-making at every node.' },
       { id: 'b4', type: 'image', content: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000&auto=format&fit=crop', caption: 'Visualizing agent node intersections.' }
-    ],
-    seoTitle: '',
-    metaDescription: ''
+    ]
   }
 ];
 
@@ -59,11 +54,11 @@ const DEFAULT_CONTENT: SiteContent = {
     hero: {
       eyebrow: "Execution Architecture",
       title: "Core Capabilities",
-      description: "We deconstruct complex digital challenges into high-performance architectural pillars."
+      description: "We deconstruct complex digital challenges into high-performance architectural pillars. Our approach translates exploratory innovation into resilient, enterprise-grade systems."
     },
     framework: {
       title: "Applied Technical Rigor",
-      description: "Our methodology prioritizes long-term resilience over immediate convenience.",
+      description: "Our methodology prioritizes long-term resilience over immediate convenience. We build systems that are designed to evolve with the rapid pace of AI and data science.",
       items: [
         { title: "Empirical Design", desc: "Every architectural decision is backed by research and data-driven proof-of-concepts." },
         { title: "Scalable Logic", desc: "Building modular frameworks that handle industrial loads and multi-region deployment." },
@@ -119,18 +114,26 @@ const DEFAULT_CONTENT: SiteContent = {
     linkedin: "https://www.linkedin.com/in/sangeeth-liyanarachchi-8886b7134",
     email: "Sangeeth@itnext.uk",
     mobile: "+447424436454",
-    detailedBio: "Sangeeth Liyanarachchi is a visionary technology leader specializing in complex digital architectures and AI-driven transformation.",
-    credentials: [{ title: "MSc Project Management", subtitle: "Strategic Implementation" }],
+    detailedBio: "Sangeeth Liyanarachchi is a visionary technology leader specializing in complex digital architectures and AI-driven transformation. With a career spanning nearly two decades, he has architected systems for global enterprises and led multidisciplinary research teams in the UK and European sectors.",
+    credentials: [
+      { title: "MSc Project Management", subtitle: "Strategic Implementation" }
+    ],
     focus: ["AI Strategy", "Product Vision", "Digital Architecture", "Strategic Innovation"]
   },
   about: {
-    hero: { title: "Pioneering Knowledge Led Innovation", description: "ITNEXT is a dedicated platform for strategic research and the practical application of emerging technologies in the enterprise landscape." },
+    hero: {
+      title: "Pioneering Knowledge Led Innovation",
+      description: "ITNEXT is a dedicated platform for strategic research and the practical application of emerging technologies in the enterprise landscape."
+    },
     pillars: [
       { id: '1', title: "Our Mission & Vision", desc: "Bridging the gap between academic research and industrial application.", details: ["Academic-Industry Bridge", "Data-Informed Paths", "Resilience Focus"] },
       { id: '2', title: "Non-Commercial Core", desc: "Providing the strategic clarity leaders need without commercial noise.", details: ["Objective Strategy", "Intellectual Freedom", "Exploratory Focus"] },
       { id: '3', title: "Responsible Innovation", desc: "A commitment to ethics and transparency in AI standards.", details: ["Ethical AI Advocacy", "Transparency First", "Safety Alignment"] }
     ],
-    alignment: { title: "Responsible Digital Growth", description: "Our approach to innovation is rooted in the UK's digital and AI growth strategy, focusing on sustainable systems." },
+    alignment: {
+      title: "Responsible Digital Growth",
+      description: "Our approach to innovation is rooted in the UK's digital and AI growth strategy, focusing on sustainable systems."
+    },
     alignmentItems: [
       { title: "Continuous Learning", desc: "Fostering a culture where emerging research is constantly integrated into our strategic frameworks." },
       { title: "Applied Frameworks", desc: "Developing methodologies that ensure digital transformation is both cutting-edge and industrially stable." },
@@ -139,13 +142,19 @@ const DEFAULT_CONTENT: SiteContent = {
     visionQuote: "ITNEXT operates as an intellectual engine, decoupling innovation from commercial noise to provide the strategic clarity leaders need."
   },
   research: {
-    hero: { title: "The Innovation Platform", description: "ITNEXT functions as a non-commercial experimentation environment where we deconstruct emerging technologies into actionable industrial frameworks." },
+    hero: {
+      title: "The Innovation Platform",
+      description: "ITNEXT functions as a non-commercial experimentation environment where we deconstruct emerging technologies into actionable industrial frameworks."
+    },
     pillars: [
       { id: 'poc', title: "Proof-of-Concept Design", desc: "Rapid prototyping of experimental models to test technological viability.", details: ["Viability Testing", "Rapid Prototyping", "Risk Mitigation"] },
       { id: 'framework', title: "Framework Development", desc: "Codifying research into high-performance architectural patterns.", details: ["Architectural Patterns", "Standardization", "Scalability Research"] },
       { id: 'innovation', title: "Innovation Models", desc: "Developing long-term operating models for organizations.", details: ["Change Absorption", "Stability Engineering", "Future-Proofing"] }
     ],
-    ethics: { title: "Responsible Experimentation", description: "Our research prioritizes 'Responsible AI' and sustainable digital systems." },
+    ethics: {
+      title: "Responsible Experimentation",
+      description: "Our research prioritizes 'Responsible AI' and sustainable digital systems."
+    },
     ethicsItems: [
       { title: "Algorithmic Transparency", desc: "Every model we test is deconstructed to ensure decision-making logic is clear and auditable." },
       { title: "Empirical Testing", desc: "Moving beyond theoretical hype into data-backed validation of performance and security." },
@@ -154,7 +163,10 @@ const DEFAULT_CONTENT: SiteContent = {
     methodologyQuote: "The goal of ITNEXT Research is not to deliver a product, but to deliver the wisdom and the framework required for an organization to build its own future."
   },
   contact: {
-    hero: { title: "Connect With ITNEXT", description: "We look forward to starting a strategic conversation about your digital innovation journey and research requirements." },
+    hero: {
+      title: "Connect With ITNEXT",
+      description: "We look forward to starting a strategic conversation about your digital innovation journey and research requirements."
+    },
     channels: [
       { id: 'email', title: "Direct Correspondence", desc: "For formal research inquiries and partnership proposals.", details: ["Sangeeth@itnext.uk", "+447424436454", "48h Response SLA"] },
       { id: 'linkedin', title: "Strategic Network", desc: "Connect with our leadership and follow our latest research nodes.", details: ["LinkedIn Profile", "Innovation Updates", "Founder Direct"] },
@@ -170,219 +182,193 @@ const DEFAULT_CONTENT: SiteContent = {
   }
 };
 
-// ─── Context Types ────────────────────────────────────────────────────────────
-
 interface GlobalContextType {
   content: SiteContent;
-  updateContent: (newContent: Partial<SiteContent>) => void;
+  isLoading: boolean;
+  error: string | null;
+  updateContent: (newContent: Partial<SiteContent>) => Promise<void>;
   upsertPost: (post: InsightPost) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
-  likePost: (id: string) => Promise<number>;
-  sharePost: (id: string) => Promise<number>;
   resetToDefaults: () => void;
-  refreshInsights: () => Promise<void>;
-  backendOnline: boolean;
+  refreshContent: () => Promise<void>;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
-// ── Helper: map MongoDB doc (_id) → frontend id ───────────────────────────────
-function mapPost(doc: any): InsightPost {
+// Helper: normalise a MongoDB insight document to the frontend InsightPost shape
+function normaliseInsight(doc: any): InsightPost {
   return {
     ...doc,
-    id: doc._id ?? doc.id,
+    id: doc._id || doc.id,
+    date: doc.date || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : ''),
   };
 }
 
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [backendOnline, setBackendOnline] = useState(false);
   const [content, setContent] = useState<SiteContent>(() => {
-    // Start from localStorage while we fetch from backend
+    // Start with localStorage / defaults while the API call is in-flight
     const saved = localStorage.getItem('itnext_content');
     if (saved) {
       try {
-        const p = JSON.parse(saved);
+        const parsedContent = JSON.parse(saved);
         return {
           ...DEFAULT_CONTENT,
-          ...p,
-          hero: { ...DEFAULT_CONTENT.hero, ...p.hero },
-          overview: { ...DEFAULT_CONTENT.overview, ...p.overview },
-          homeCTA: p.homeCTA || DEFAULT_CONTENT.homeCTA,
-          blogPage: p.blogPage ? {
-            hero: { ...DEFAULT_CONTENT.blogPage.hero, ...p.blogPage.hero },
-            newsletter: { ...DEFAULT_CONTENT.blogPage.newsletter, ...p.blogPage.newsletter },
-            stats: p.blogPage.stats || DEFAULT_CONTENT.blogPage.stats
+          ...parsedContent,
+          hero: { ...DEFAULT_CONTENT.hero, ...parsedContent.hero },
+          overview: { ...DEFAULT_CONTENT.overview, ...parsedContent.overview },
+          homeCTA: parsedContent.homeCTA || DEFAULT_CONTENT.homeCTA,
+          focusAreasPage: parsedContent.focusAreasPage ? {
+            hero: { ...DEFAULT_CONTENT.focusAreasPage.hero, ...parsedContent.focusAreasPage.hero },
+            framework: { ...DEFAULT_CONTENT.focusAreasPage.framework, ...parsedContent.focusAreasPage.framework }
+          } : DEFAULT_CONTENT.focusAreasPage,
+          blogPage: parsedContent.blogPage ? {
+            hero: { ...DEFAULT_CONTENT.blogPage.hero, ...parsedContent.blogPage.hero },
+            newsletter: { ...DEFAULT_CONTENT.blogPage.newsletter, ...parsedContent.blogPage.newsletter },
+            stats: parsedContent.blogPage.stats || DEFAULT_CONTENT.blogPage.stats
           } : DEFAULT_CONTENT.blogPage,
-          founder: { ...DEFAULT_CONTENT.founder, ...p.founder },
-          about: { ...DEFAULT_CONTENT.about, ...p.about },
-          research: { ...DEFAULT_CONTENT.research, ...p.research },
-          contact: { ...DEFAULT_CONTENT.contact, ...p.contact },
-          insights: Array.isArray(p.insights) && p.insights.length ? p.insights : DEFAULT_CONTENT.insights,
+          founder: { ...DEFAULT_CONTENT.founder, ...parsedContent.founder },
+          about: { ...DEFAULT_CONTENT.about, ...parsedContent.about },
+          research: { ...DEFAULT_CONTENT.research, ...parsedContent.research },
+          contact: { ...DEFAULT_CONTENT.contact, ...parsedContent.contact },
         };
-      } catch {
+      } catch (e) {
         return DEFAULT_CONTENT;
       }
     }
     return DEFAULT_CONTENT;
   });
 
-  // ── Persist non-insight content to localStorage ──
-  useEffect(() => {
-    localStorage.setItem('itnext_content', JSON.stringify(content));
-  }, [content]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // ── Load insights from backend on mount ──
-  const refreshInsights = useCallback(async () => {
+  // ── Fetch everything from backend on mount ─────────────────────────────
+
+  const refreshContent = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const res = await insightsApi.getAll({ status: 'all' } as any);
-      const posts = (res.data.insights || []).map(mapPost);
-      if (posts.length > 0) {
-        setContent(prev => ({ ...prev, insights: posts }));
-        setBackendOnline(true);
-      }
-    } catch (err) {
-      // backend offline → use localStorage data silently
-      setBackendOnline(false);
+      // Fetch site content + insights in parallel
+      const [contentRes, insightsRes] = await Promise.all([
+        contentApi.get(),
+        insightsApi.getAll().catch(() => ({ data: { insights: [] } })),
+      ]);
+
+      const backendContent = contentRes.data?.content || {};
+      const backendInsights: InsightPost[] = (insightsRes.data?.insights || []).map(normaliseInsight);
+
+      const merged: SiteContent = {
+        ...DEFAULT_CONTENT,
+        ...backendContent,
+        hero: { ...DEFAULT_CONTENT.hero, ...(backendContent.hero || {}) },
+        overview: { ...DEFAULT_CONTENT.overview, ...(backendContent.overview || {}) },
+        homeCTA: backendContent.homeCTA || DEFAULT_CONTENT.homeCTA,
+        focusAreasPage: backendContent.focusAreasPage ? {
+          hero: { ...DEFAULT_CONTENT.focusAreasPage.hero, ...(backendContent.focusAreasPage.hero || {}) },
+          framework: { ...DEFAULT_CONTENT.focusAreasPage.framework, ...(backendContent.focusAreasPage.framework || {}) }
+        } : DEFAULT_CONTENT.focusAreasPage,
+        blogPage: backendContent.blogPage ? {
+          hero: { ...DEFAULT_CONTENT.blogPage.hero, ...(backendContent.blogPage.hero || {}) },
+          newsletter: { ...DEFAULT_CONTENT.blogPage.newsletter, ...(backendContent.blogPage.newsletter || {}) },
+          stats: backendContent.blogPage.stats || DEFAULT_CONTENT.blogPage.stats
+        } : DEFAULT_CONTENT.blogPage,
+        founder: { ...DEFAULT_CONTENT.founder, ...(backendContent.founder || {}) },
+        about: { ...DEFAULT_CONTENT.about, ...(backendContent.about || {}) },
+        research: { ...DEFAULT_CONTENT.research, ...(backendContent.research || {}) },
+        contact: { ...DEFAULT_CONTENT.contact, ...(backendContent.contact || {}) },
+        focusAreas: backendContent.focusAreas?.length ? backendContent.focusAreas : DEFAULT_CONTENT.focusAreas,
+        products: backendContent.products?.length ? backendContent.products : DEFAULT_CONTENT.products,
+        insights: backendInsights.length ? backendInsights : DEFAULT_CONTENT.insights,
+      };
+
+      setContent(merged);
+      localStorage.setItem('itnext_content', JSON.stringify(merged));
+    } catch (err: any) {
+      console.warn('Backend unreachable — using local/default data:', err.message);
+      setError('Backend unreachable — showing cached data');
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    refreshInsights();
-    // Poll every 60s to stay in sync
-    const interval = setInterval(refreshInsights, 60_000);
-    return () => clearInterval(interval);
-  }, [refreshInsights]);
+    refreshContent();
+  }, [refreshContent]);
 
-  // ── updateContent: site-wide content (non-posts) ──
-  const updateContent = (updates: Partial<SiteContent>) => {
-    setContent(prev => ({ ...prev, ...updates }));
+  // ── Persist helper ─────────────────────────────────────────────────────
+
+  const persistToLocalStorage = (updated: SiteContent) => {
+    localStorage.setItem('itnext_content', JSON.stringify(updated));
   };
 
-  // ── upsertPost: create or update via API, then sync locally ──
-  const upsertPost = async (post: InsightPost) => {
-    // Optimistic local update first
-    setContent(prev => {
-      const exists = prev.insights.find(p => p.id === post.id);
-      return {
-        ...prev,
-        insights: exists
-          ? prev.insights.map(p => p.id === post.id ? post : p)
-          : [post, ...prev.insights]
-      };
-    });
+  // ── Update site content (calls backend, then updates local state) ──────
 
-    if (!backendOnline) return;
+  const updateContent = async (updates: Partial<SiteContent>) => {
+    const prev = content;
+    const next = { ...prev, ...updates };
+    setContent(next);
+    persistToLocalStorage(next);
 
     try {
-      // MongoDB uses _id, check if the post has a real Mongo id or a local temporary one
-      const isMongoId = /^[a-f\d]{24}$/i.test(post.id);
-      if (isMongoId) {
-        await insightsApi.update(post.id, post);
+      await contentApi.update(updates);
+    } catch (err: any) {
+      console.error('Failed to save to backend:', err.message);
+    }
+  };
+
+  // ── Upsert insight post ───────────────────────────────────────────────
+
+  const upsertPost = async (post: InsightPost) => {
+    const prev = content;
+    const exists = prev.insights.find(p => p.id === post.id);
+    const updatedInsights = exists
+      ? prev.insights.map(p => p.id === post.id ? post : p)
+      : [post, ...prev.insights];
+    const next = { ...prev, insights: updatedInsights };
+    setContent(next);
+    persistToLocalStorage(next);
+
+    try {
+      if (exists) {
+        const res = await insightsApi.update(post.id, post);
+        const savedPost = normaliseInsight(res.data?.insight || post);
+        setContent(c => ({
+          ...c,
+          insights: c.insights.map(p => p.id === post.id ? savedPost : p)
+        }));
       } else {
-        // New post — create on backend
         const res = await insightsApi.create(post);
-        const saved = mapPost(res.data.insight);
-        // Replace temp id with real Mongo _id
-        setContent(prev => ({
-          ...prev,
-          insights: prev.insights.map(p => p.id === post.id ? saved : p)
+        const savedPost = normaliseInsight(res.data?.insight || post);
+        setContent(c => ({
+          ...c,
+          insights: c.insights.map(p => p.id === post.id ? savedPost : p)
         }));
       }
-    } catch (err) {
-      console.error('Failed to save post to backend:', err);
+    } catch (err: any) {
+      console.error('Failed to save insight to backend:', err.message);
     }
   };
 
-  // ── deletePost: delete via API, then sync locally ──
-  const deletePost = async (id: string) => {
-    // Optimistic local delete
-    setContent(prev => ({ ...prev, insights: prev.insights.filter(p => p.id !== id) }));
+  // ── Delete insight post ───────────────────────────────────────────────
 
-    if (!backendOnline) return;
+  const deletePost = async (id: string) => {
+    const prev = content;
+    const next = { ...prev, insights: prev.insights.filter(p => p.id !== id) };
+    setContent(next);
+    persistToLocalStorage(next);
 
     try {
-      const isMongoId = /^[a-f\d]{24}$/i.test(id);
-      if (isMongoId) {
-        await insightsApi.delete(id);
-      }
-    } catch (err) {
-      console.error('Failed to delete post from backend:', err);
+      await insightsApi.delete(id);
+    } catch (err: any) {
+      console.error('Failed to delete insight from backend:', err.message);
     }
   };
 
-  // ── likePost: increment likes via API, return new count ──
-  const likePost = async (id: string): Promise<number> => {
-    // Optimistic local increment
-    let newCount = 0;
-    setContent(prev => ({
-      ...prev,
-      insights: prev.insights.map(p => {
-        if (p.id === id) {
-          newCount = p.likes + 1;
-          return { ...p, likes: newCount };
-        }
-        return p;
-      })
-    }));
-
-    if (backendOnline) {
-      try {
-        const isMongoId = /^[a-f\d]{24}$/i.test(id);
-        if (isMongoId) {
-          const res = await insightsApi.like(id);
-          newCount = res.data.likes;
-          // Sync with server value
-          setContent(prev => ({
-            ...prev,
-            insights: prev.insights.map(p => p.id === id ? { ...p, likes: newCount } : p)
-          }));
-        }
-      } catch (err) {
-        console.error('Failed to sync like:', err);
-      }
-    }
-    return newCount;
+  const resetToDefaults = () => {
+    setContent(DEFAULT_CONTENT);
   };
-
-  // ── sharePost: increment shares via API, return new count ──
-  const sharePost = async (id: string): Promise<number> => {
-    let newCount = 0;
-    setContent(prev => ({
-      ...prev,
-      insights: prev.insights.map(p => {
-        if (p.id === id) {
-          newCount = p.shares + 1;
-          return { ...p, shares: newCount };
-        }
-        return p;
-      })
-    }));
-
-    if (backendOnline) {
-      try {
-        const isMongoId = /^[a-f\d]{24}$/i.test(id);
-        if (isMongoId) {
-          const res = await insightsApi.share(id);
-          newCount = res.data.shares;
-          setContent(prev => ({
-            ...prev,
-            insights: prev.insights.map(p => p.id === id ? { ...p, shares: newCount } : p)
-          }));
-        }
-      } catch (err) {
-        console.error('Failed to sync share:', err);
-      }
-    }
-    return newCount;
-  };
-
-  const resetToDefaults = () => setContent(DEFAULT_CONTENT);
 
   return (
-    <GlobalContext.Provider value={{
-      content, updateContent, upsertPost, deletePost,
-      likePost, sharePost, refreshInsights, resetToDefaults, backendOnline
-    }}>
+    <GlobalContext.Provider value={{ content, isLoading, error, updateContent, upsertPost, deletePost, resetToDefaults, refreshContent }}>
       {children}
     </GlobalContext.Provider>
   );

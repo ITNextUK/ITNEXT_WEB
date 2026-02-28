@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { useNavigate, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Target, LogOut, Save, RotateCcw,
   CheckCircle, Home as HomeIcon, Plus, Trash2, 
@@ -17,9 +17,8 @@ import {
 } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
 import { useAuth } from '../context/AuthContext';
+import { uploadApi } from '../services/api.service';
 import { InsightPost, ContentBlock, ContentBlockType, SiteContent } from '../types';
-
-const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
 
 // Shared Admin UI Components
 const SectionHeader: React.FC<{ title: string, onSave?: () => void, saved?: boolean, secondaryAction?: React.ReactNode }> = ({ title, onSave, saved, secondaryAction }) => (
@@ -76,7 +75,6 @@ const CloudinaryImageUpload: React.FC<{
   label?: string;
   aspectClass?: string;
 }> = ({ value, onChange, label = 'Feature Image', aspectClass = 'aspect-[16/9]' }) => {
-  const { token } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -87,19 +85,8 @@ const CloudinaryImageUpload: React.FC<{
     setUploading(true);
     setUploadError('');
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-      const res = await fetch(`${API_URL}/upload/image`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || 'Upload failed');
-      }
-      const data = await res.json();
-      onChange(data.data.url);
+      const url = await uploadApi.image(file);
+      onChange(url);
     } catch (err: any) {
       setUploadError(err.message || 'Upload failed. Ensure backend is running.');
     } finally {
@@ -1107,33 +1094,6 @@ const BlogEditor = () => {
                        onChange={(url: string) => setCurrentPost({...currentPost, featureImage: url})}
                        aspectClass="aspect-[21/9]"
                      />
-                      {/* Tags editor */}
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest block">Tags (press Enter to add)</label>
-                        <div className="flex flex-wrap gap-2 p-4 bg-zinc-50 border border-zinc-200 rounded-2xl min-h-[52px]">
-                          {(currentPost.tags || []).map((tag, i) => (
-                            <span key={i} className="flex items-center space-x-2 px-4 py-1.5 bg-white border border-zinc-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                              <span>#{tag}</span>
-                              <button onClick={() => setCurrentPost({ ...currentPost, tags: currentPost.tags.filter((_, ti) => ti !== i) })} className="text-zinc-300 hover:text-red-500 transition-colors"><X size={10} /></button>
-                            </span>
-                          ))}
-                          <input
-                            type="text"
-                            placeholder="Type a tag and press Enter..."
-                            className="flex-grow bg-transparent border-none focus:ring-0 text-xs font-bold text-zinc-500 min-w-[160px] p-1"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                const val = (e.target as HTMLInputElement).value.trim();
-                                if (val && !currentPost.tags.includes(val)) {
-                                  setCurrentPost({ ...currentPost, tags: [...currentPost.tags, val] });
-                                  (e.target as HTMLInputElement).value = '';
-                                }
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
                    </div>
                 </div>
               )}
@@ -1279,17 +1239,17 @@ const BlogEditor = () => {
                <div className="space-y-6">
                  <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-2">Actions</h3>
                  <div className="grid grid-cols-1 gap-3">
-                    <button onClick={() => { const dup = { ...currentPost, id: Date.now().toString(), title: currentPost.title + ' (Copy)', status: 'draft' as const, slug: '' }; upsertPost(dup); setCurrentPost(dup); }} className="w-full flex items-center space-x-3 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-600 transition-all">
+                    <button className="w-full flex items-center space-x-3 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-600 transition-all">
                       <Copy size={14} />
                       <span>Duplicate Node</span>
                     </button>
-                    <button onClick={() => setCurrentPost({ ...currentPost, status: 'archived' as any })} className="w-full flex items-center space-x-3 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-600 transition-all">
+                    <button className="w-full flex items-center space-x-3 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-600 transition-all">
                       <Archive size={14} />
                       <span>Archive Publication</span>
                     </button>
-                    <button onClick={() => { if (window.confirm('Delete permanently?')) { deletePost(currentPost.id); setIsEditing(false); } }} className="w-full flex items-center space-x-3 px-6 py-4 bg-red-50 hover:bg-red-500 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 transition-all">
+                    <button className="w-full flex items-center space-x-3 px-6 py-4 bg-red-50 hover:bg-red-500 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 transition-all">
                       <Trash2 size={14} />
-                      <span>Delete Permanently</span>
+                      <span>Delete Permantently</span>
                     </button>
                  </div>
                </div>
@@ -1379,44 +1339,17 @@ const BlogEditor = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-2 mt-8 md:mt-0">
-                  {/* Quick status toggle */}
-                  <div className="flex items-center bg-zinc-100 rounded-2xl p-1">
-                    {(['published', 'draft', 'archived'] as const).map(s => (
-                      <button
-                        key={s}
-                        onClick={() => upsertPost({ ...post, status: s })}
-                        title={s.charAt(0).toUpperCase() + s.slice(1)}
-                        className={`px-3 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all ${
-                          post.status === s
-                            ? s === 'published' ? 'bg-green-500 text-white shadow-sm'
-                            : s === 'draft' ? 'bg-zinc-400 text-white shadow-sm'
-                            : 'bg-zinc-600 text-white shadow-sm'
-                            : 'text-zinc-400 hover:text-zinc-600'
-                        }`}
-                      >{s === 'published' ? '● Live' : s === 'draft' ? '○ Draft' : '⊘ Archive'}</button>
-                    ))}
-                  </div>
-                  {/* Featured toggle */}
-                  <button
-                    onClick={() => upsertPost({ ...post, isFeatured: !post.isFeatured })}
-                    title={post.isFeatured ? 'Unpin featured' : 'Pin as featured'}
-                    className={`p-3 rounded-2xl transition-all ${
-                      post.isFeatured ? 'bg-brand-accent text-white' : 'bg-zinc-100 text-zinc-400 hover:text-brand-accent'
-                    }`}
-                  >
-                    <Sparkles size={16} />
-                  </button>
+                <div className="flex items-center space-x-4 mt-8 md:mt-0">
                   <button 
                     onClick={() => handleEdit(post)}
-                    className="flex items-center space-x-2 px-5 py-3 bg-zinc-100 hover:bg-brand-dark hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-500 transition-all"
+                    className="flex items-center space-x-2 px-6 py-4 bg-zinc-100 hover:bg-brand-dark hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-500 transition-all"
                   >
                     <Edit3 size={16} />
-                    <span>Edit</span>
+                    <span>Edit Node</span>
                   </button>
                   <button 
-                    onClick={() => { if (window.confirm('Delete this post permanently?')) deletePost(post.id); }}
-                    className="p-3 bg-zinc-100 hover:bg-red-500 hover:text-white rounded-2xl text-zinc-500 transition-all"
+                    onClick={() => deletePost(post.id)}
+                    className="p-4 bg-zinc-100 hover:bg-red-500 hover:text-white rounded-2xl text-zinc-500 transition-all"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -1517,7 +1450,6 @@ const Admin: React.FC = () => {
             <Route path="/about" element={<AboutEditor />} />
             <Route path="/research" element={<ResearchEditor />} />
             <Route path="/contact" element={<ContactEditor />} />
-            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
           </Routes>
         </div>
       </div>

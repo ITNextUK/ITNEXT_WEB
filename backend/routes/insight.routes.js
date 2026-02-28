@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect, adminOnly } = require('../middleware/auth.middleware');
+const { protect, optionalProtect, adminOnly } = require('../middleware/auth.middleware');
 const {
   getAllInsights,
   getInsightBySlug,
@@ -11,8 +11,8 @@ const {
   shareInsight
 } = require('../controllers/insight.controller');
 
-// Public routes
-router.get('/', getAllInsights);
+// Public routes (optionalProtect allows admin to see drafts)
+router.get('/', optionalProtect, getAllInsights);
 router.get('/:slug', getInsightBySlug);
 router.post('/:id/like', likeInsight);
 router.post('/:id/share', shareInsight);

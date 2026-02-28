@@ -18,47 +18,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<{ email: string; name: string; role: string } | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Restore session on mount
+  // Check for existing session on mount — validate token with backend
   useEffect(() => {
     const storedToken = localStorage.getItem('adminToken');
     const storedUser = localStorage.getItem('adminUser');
+
     if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        setIsAuthenticated(true);
-      } catch {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminUser');
-      }
+      // Optimistically set state, then verify with backend
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
+
+      // Verify token is still valid
+      authApi.me()
+        .then((res: any) => {
+          const backendUser = res.data?.user;
+          if (backendUser) {
+            const u = { email: backendUser.email, name: backendUser.name, role: backendUser.role };
+            setUser(u);
+            localStorage.setItem('adminUser', JSON.stringify(u));
+          }
+        })
+        .catch(() => {
+          // Token invalid/expired — clear session
+          setToken(null);
+          setUser(null);
+          setIsAuthenticated(false);
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('adminUser');
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const res = await authApi.login(email, password);
-      const { token: jwt, user: userData } = res.data;
+      const response = await authApi.login(email, password);
+      const { token: jwt, user: backendUser } = response.data;
+
+      const u = { email: backendUser.email, name: backendUser.name, role: backendUser.role };
 
       setToken(jwt);
-      setUser(userData);
+      setUser(u);
       setIsAuthenticated(true);
+
       localStorage.setItem('adminToken', jwt);
-      localStorage.setItem('adminUser', JSON.stringify(userData));
+      localStorage.setItem('adminUser', JSON.stringify(u));
+
       return true;
-    } catch (err: any) {
-      console.error('Login error:', err.message);
-      // Fallback to dev credentials when backend is unreachable
-      if (email === 'admin@itnext.uk' && password === 'admin123') {
-        const mockToken = 'dev-token-' + Date.now();
-        const mockUser = { email, name: 'ITNEXT Admin', role: 'admin' };
-        setToken(mockToken);
-        setUser(mockUser);
-        setIsAuthenticated(true);
-        localStorage.setItem('adminToken', mockToken);
-        localStorage.setItem('adminUser', JSON.stringify(mockUser));
-        return true;
-      }
+    } catch (error) {
+      console.error('Login error:', error);
       return false;
     }
   };
@@ -80,6 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };

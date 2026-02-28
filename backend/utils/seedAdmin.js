@@ -14,7 +14,7 @@ const seedAdmin = async () => {
     // Create admin user
     const admin = await User.create({
       email: process.env.ADMIN_EMAIL || 'admin@itnext.uk',
-      password: process.env.ADMIN_PASSWORD || 'changethispassword123',
+      password: process.env.ADMIN_PASSWORD || 'admin123',
       name: 'ITNEXT Admin',
       role: 'admin'
     });

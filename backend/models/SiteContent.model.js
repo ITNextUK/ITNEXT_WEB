@@ -18,6 +18,50 @@ const siteContentSchema = new mongoose.Schema({
     statLabel: String
   },
 
+  // Home CTA Section
+  homeCTA: {
+    title: String,
+    description: String,
+    buttonText: String
+  },
+
+  // Focus Areas Page
+  focusAreasPage: {
+    hero: {
+      eyebrow: String,
+      title: String,
+      description: String
+    },
+    framework: {
+      title: String,
+      description: String,
+      items: [{
+        title: String,
+        desc: String
+      }],
+      quote: String
+    }
+  },
+
+  // Blog Page
+  blogPage: {
+    hero: {
+      eyebrow: String,
+      title: String,
+      description: String
+    },
+    newsletter: {
+      eyebrow: String,
+      title: String,
+      description: String,
+      privacy: String
+    },
+    stats: [{
+      label: String,
+      val: String
+    }]
+  },
+
   // Focus Areas
   focusAreas: [{
     id: String,
