@@ -138,7 +138,8 @@ const siteContentSchema = new mongoose.Schema({
     }],
     ethics: {
       title: String,
-      description: String
+      description: String,
+      subtitle: String
     },
     ethicsItems: [{
       title: String,

@@ -13,7 +13,7 @@ import {
   Users, Share2, Heart, ExternalLink, List, 
   Table as TableIcon, AlertCircle, Copy, Archive,
   BarChart4, MoveUp, MoveDown, User, PlusCircle,
-  Camera
+  Camera, Shield
 } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
 import { useAuth } from '../context/AuthContext';
@@ -673,20 +673,185 @@ const ResearchEditor = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  /* ── Pillars helpers ── */
+  const addPillar = () => {
+    const newPillar = { id: Date.now().toString(), title: 'New Pillar', desc: 'Description...', details: ['Detail 1'] };
+    updateContent({ research: { ...content.research, pillars: [...content.research.pillars, newPillar] } });
+  };
+
+  const removePillar = (idx: number) => {
+    updateContent({ research: { ...content.research, pillars: content.research.pillars.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const updatePillar = (idx: number, field: string, val: any) => {
+    const updated = [...content.research.pillars];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ research: { ...content.research, pillars: updated } });
+  };
+
+  const addPillarDetail = (pIdx: number) => {
+    const updated = [...content.research.pillars];
+    updated[pIdx] = { ...updated[pIdx], details: [...updated[pIdx].details, 'New Detail'] };
+    updateContent({ research: { ...content.research, pillars: updated } });
+  };
+
+  const removePillarDetail = (pIdx: number, detailIdx: number) => {
+    const updated = [...content.research.pillars];
+    updated[pIdx] = { ...updated[pIdx], details: updated[pIdx].details.filter((_: any, i: number) => i !== detailIdx) };
+    updateContent({ research: { ...content.research, pillars: updated } });
+  };
+
+  const updatePillarDetail = (pIdx: number, detailIdx: number, val: string) => {
+    const updated = [...content.research.pillars];
+    const details = [...updated[pIdx].details];
+    details[detailIdx] = val;
+    updated[pIdx] = { ...updated[pIdx], details };
+    updateContent({ research: { ...content.research, pillars: updated } });
+  };
+
+  /* ── Ethics Items helpers ── */
+  const addEthicsItem = () => {
+    updateContent({ research: { ...content.research, ethicsItems: [...content.research.ethicsItems, { title: 'New Item', desc: 'Description...' }] } });
+  };
+
+  const removeEthicsItem = (idx: number) => {
+    updateContent({ research: { ...content.research, ethicsItems: content.research.ethicsItems.filter((_: any, i: number) => i !== idx) } });
+  };
+
+  const updateEthicsItem = (idx: number, field: 'title' | 'desc', val: string) => {
+    const updated = [...content.research.ethicsItems];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ research: { ...content.research, ethicsItems: updated } });
+  };
+
+  /* ── Products helpers ── */
+  const addProduct = () => {
+    const newProduct = { id: Date.now().toString(), name: 'New Product', url: '#', targetMarket: 'Target Market', researchCategoryId: '' };
+    updateContent({ products: [...(content.products || []), newProduct] });
+  };
+
+  const removeProduct = (idx: number) => {
+    updateContent({ products: content.products.filter((_: any, i: number) => i !== idx) });
+  };
+
+  const updateProduct = (idx: number, field: string, val: string) => {
+    const updated = [...content.products];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ products: updated });
+  };
+
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 pb-32">
       <SectionHeader title="Methodology Lab Editor" onSave={handleSave} saved={saved} />
       <div className="space-y-12">
+        {/* Hero */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
           <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Research Hero</h3>
           <InputField label="Hero Title" value={content.research.hero.title} onChange={(v) => updateContent({ research: { ...content.research, hero: { ...content.research.hero, title: v } } })} />
           <InputField label="Hero Description" type="textarea" value={content.research.hero.description} onChange={(v) => updateContent({ research: { ...content.research, hero: { ...content.research.hero, description: v } } })} />
         </div>
+
+        {/* Research Pillars */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Layers size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Research Pillars</h3>
+            </div>
+            <button onClick={addPillar} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-8">
+            {content.research.pillars.map((pillar, i) => (
+              <div key={pillar.id || i} className="p-8 bg-zinc-50 rounded-3xl relative group border border-zinc-100">
+                <button onClick={() => removePillar(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <InputField label={`Pillar ${i + 1} — ID`} value={pillar.id} onChange={(v: string) => updatePillar(i, 'id', v)} />
+                    <InputField label="Title" value={pillar.title} onChange={(v: string) => updatePillar(i, 'title', v)} />
+                  </div>
+                  <InputField label="Description" type="textarea" rows={2} value={pillar.desc} onChange={(v: string) => updatePillar(i, 'desc', v)} />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Details / Tags</span>
+                      <button onClick={() => addPillarDetail(i)} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={16} /></button>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {pillar.details.map((detail, di) => (
+                        <div key={di} className="flex items-center space-x-2 bg-white border border-zinc-200 rounded-xl px-4 py-2 group/tag">
+                          <input
+                            className="bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase tracking-widest text-zinc-600 w-40"
+                            value={detail}
+                            onChange={(e) => updatePillarDetail(i, di, e.target.value)}
+                          />
+                          <button onClick={() => removePillarDetail(i, di)} className="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover/tag:opacity-100"><X size={12} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Ethics & Methodology */}
         <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
           <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark mb-4">Ethics & Methodology</h3>
+          <InputField label="Ethics Subtitle (eyebrow)" value={content.research.ethics.subtitle || ''} onChange={(v) => updateContent({ research: { ...content.research, ethics: { ...content.research.ethics, subtitle: v } } })} />
           <InputField label="Ethics Title" value={content.research.ethics.title} onChange={(v) => updateContent({ research: { ...content.research, ethics: { ...content.research.ethics, title: v } } })} />
           <InputField label="Ethics Description" type="textarea" value={content.research.ethics.description} onChange={(v) => updateContent({ research: { ...content.research, ethics: { ...content.research.ethics, description: v } } })} />
           <InputField label="Methodology Quote" type="textarea" value={content.research.methodologyQuote} onChange={(v) => updateContent({ research: { ...content.research, methodologyQuote: v } })} />
+        </div>
+
+        {/* Ethics Items */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Shield size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Ethics Items</h3>
+            </div>
+            <button onClick={addEthicsItem} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-6">
+            {content.research.ethicsItems.map((item, i) => (
+              <div key={i} className="p-6 bg-zinc-50 rounded-2xl relative group border border-zinc-100">
+                <button onClick={() => removeEthicsItem(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-4">
+                  <InputField label={`Item ${i + 1} — Title`} value={item.title} onChange={(v: string) => updateEthicsItem(i, 'title', v)} />
+                  <InputField label="Description" type="textarea" rows={2} value={item.desc} onChange={(v: string) => updateEthicsItem(i, 'desc', v)} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Products / Matured Assets */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Sparkles size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Products / Matured Assets</h3>
+            </div>
+            <button onClick={addProduct} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-6">
+            {(content.products || []).map((product, i) => (
+              <div key={product.id || i} className="p-6 bg-zinc-50 rounded-2xl relative group border border-zinc-100">
+                <button onClick={() => removeProduct(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-6">
+                    <InputField label={`Product ${i + 1} — Name`} value={product.name} onChange={(v: string) => updateProduct(i, 'name', v)} />
+                    <InputField label="URL" value={product.url} onChange={(v: string) => updateProduct(i, 'url', v)} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <InputField label="Target Market" value={product.targetMarket} onChange={(v: string) => updateProduct(i, 'targetMarket', v)} />
+                    <InputField label="Research Category ID" value={product.researchCategoryId} onChange={(v: string) => updateProduct(i, 'researchCategoryId', v)} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -851,6 +1016,43 @@ const FocusAreasEditor = () => {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  /* ── Focus Areas array helpers ── */
+  const addFocusArea = () => {
+    const newArea = { id: Date.now().toString(), title: 'New Focus Area', description: 'Description...', details: ['Detail 1'] };
+    updateContent({ focusAreas: [...content.focusAreas, newArea] });
+  };
+
+  const removeFocusArea = (idx: number) => {
+    updateContent({ focusAreas: content.focusAreas.filter((_: any, i: number) => i !== idx) });
+  };
+
+  const updateFocusArea = (idx: number, field: string, val: any) => {
+    const updated = [...content.focusAreas];
+    updated[idx] = { ...updated[idx], [field]: val };
+    updateContent({ focusAreas: updated });
+  };
+
+  const addFocusAreaDetail = (faIdx: number) => {
+    const updated = [...content.focusAreas];
+    updated[faIdx] = { ...updated[faIdx], details: [...updated[faIdx].details, 'New Detail'] };
+    updateContent({ focusAreas: updated });
+  };
+
+  const removeFocusAreaDetail = (faIdx: number, detailIdx: number) => {
+    const updated = [...content.focusAreas];
+    updated[faIdx] = { ...updated[faIdx], details: updated[faIdx].details.filter((_: any, i: number) => i !== detailIdx) };
+    updateContent({ focusAreas: updated });
+  };
+
+  const updateFocusAreaDetail = (faIdx: number, detailIdx: number, val: string) => {
+    const updated = [...content.focusAreas];
+    const details = [...updated[faIdx].details];
+    details[detailIdx] = val;
+    updated[faIdx] = { ...updated[faIdx], details };
+    updateContent({ focusAreas: updated });
+  };
+
+  /* ── Framework items helpers ── */
   const addFrameworkItem = () => {
     const updated = {
       ...content.focusAreasPage,
@@ -909,6 +1111,49 @@ const FocusAreasEditor = () => {
             value={content.focusAreasPage.hero.description} 
             onChange={(v: string) => updateContent({ focusAreasPage: { ...content.focusAreasPage, hero: { ...content.focusAreasPage.hero, description: v } } })} 
           />
+        </div>
+
+        {/* Focus Areas Cards */}
+        <div className="bg-white p-12 rounded-[2.5rem] border border-zinc-200 shadow-sm space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3 text-brand-accent">
+              <Layers size={20} />
+              <h3 className="text-xs font-black uppercase tracking-widest text-brand-dark">Focus Area Cards</h3>
+            </div>
+            <button onClick={addFocusArea} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={20} /></button>
+          </div>
+          <div className="space-y-8">
+            {content.focusAreas.map((area, i) => (
+              <div key={area.id || i} className="p-8 bg-zinc-50 rounded-3xl relative group border border-zinc-100">
+                <button onClick={() => removeFocusArea(i)} className="absolute -top-2 -right-2 p-1.5 bg-white border border-zinc-200 rounded-full text-zinc-300 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover:opacity-100"><X size={12} /></button>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <InputField label={`Area ${i + 1} — ID`} value={area.id} onChange={(v: string) => updateFocusArea(i, 'id', v)} />
+                    <InputField label="Title" value={area.title} onChange={(v: string) => updateFocusArea(i, 'title', v)} />
+                  </div>
+                  <InputField label="Description" type="textarea" rows={2} value={area.description} onChange={(v: string) => updateFocusArea(i, 'description', v)} />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Details / Tags</span>
+                      <button onClick={() => addFocusAreaDetail(i)} className="text-brand-accent hover:text-brand-dark transition-colors"><PlusCircle size={16} /></button>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {area.details.map((detail, di) => (
+                        <div key={di} className="flex items-center space-x-2 bg-white border border-zinc-200 rounded-xl px-4 py-2 group/tag">
+                          <input
+                            className="bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase tracking-widest text-zinc-600 w-40"
+                            value={detail}
+                            onChange={(e) => updateFocusAreaDetail(i, di, e.target.value)}
+                          />
+                          <button onClick={() => removeFocusAreaDetail(i, di)} className="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover/tag:opacity-100"><X size={12} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Framework Section */}

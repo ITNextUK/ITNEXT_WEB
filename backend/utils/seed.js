@@ -152,7 +152,8 @@ const DEFAULT_CONTENT = {
     ],
     ethics: {
       title: "Responsible Experimentation",
-      description: "Our research prioritizes 'Responsible AI' and sustainable digital systems."
+      description: "Our research prioritizes 'Responsible AI' and sustainable digital systems.",
+      subtitle: "Research Ethics"
     },
     ethicsItems: [
       { title: "Algorithmic Transparency", desc: "Every model we test is deconstructed to ensure decision-making logic is clear and auditable." },
