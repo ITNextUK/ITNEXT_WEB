@@ -26,7 +26,9 @@ app.use(morgan('dev')); // Logging
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3000',
-  'https://itnext-web.pages.dev'
+  'https://itnext-web.pages.dev',
+  'https://itnextresearch.uk',
+  'https://www.itnextresearch.uk'
 ];
 app.use(cors({
   origin: (origin, callback) => {
