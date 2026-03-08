@@ -131,3 +131,41 @@ export const newsletterApi = {
             body: JSON.stringify({ email }),
         }),
 };
+
+// ── Admin Management ─────────────────────────────────────────────────────────
+
+export const adminApi = {
+    /** GET /api/admin/admins — list all admin users */
+    getAdmins: () =>
+        request<{ data: { admins: any[]; total: number; page: number; pages: number } }>(
+            '/admin/admins', {}, true
+        ),
+
+    /** POST /api/admin/admins — create new admin (returns generated password) */
+    createAdmin: (data: { name: string; email: string }) =>
+        request<{ data: { admin: any; generatedPassword: string } }>(
+            '/admin/admins',
+            { method: 'POST', body: JSON.stringify(data) },
+            true
+        ),
+
+    /** PUT /api/admin/admins/:id — update admin details */
+    updateAdmin: (id: string, data: { name?: string; email?: string; isActive?: boolean }) =>
+        request<{ data: { admin: any } }>(
+            `/admin/admins/${id}`,
+            { method: 'PUT', body: JSON.stringify(data) },
+            true
+        ),
+
+    /** PUT /api/admin/admins/:id/reset-password — reset password (returns new generated password) */
+    resetPassword: (id: string) =>
+        request<{ data: { generatedPassword: string } }>(
+            `/admin/admins/${id}/reset-password`,
+            { method: 'PUT' },
+            true
+        ),
+
+    /** DELETE /api/admin/admins/:id — delete admin */
+    deleteAdmin: (id: string) =>
+        request(`/admin/admins/${id}`, { method: 'DELETE' }, true),
+};

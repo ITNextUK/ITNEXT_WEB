@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
 import { useAuth } from '../context/AuthContext';
-import { uploadApi } from '../services/api.service';
+import { uploadApi, adminApi } from '../services/api.service';
 import { InsightPost, ContentBlock, ContentBlockType, SiteContent } from '../types';
 
 // Shared Admin UI Components
@@ -1859,6 +1859,371 @@ const BlogEditor = () => {
   );
 };
 
+// ── Admin Management Component ───────────────────────────────────────────────
+
+interface AdminUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  mustChangePassword: boolean;
+  lastLogin?: string;
+  createdAt: string;
+}
+
+const AdminManager = () => {
+  const { user: currentUser } = useAuth();
+  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Modal states
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Form states
+  const [formName, setFormName] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [generatedPassword, setGeneratedPassword] = useState('');
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminUser | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const fetchAdmins = async () => {
+    try {
+      setLoading(true);
+      const res = await adminApi.getAdmins();
+      setAdmins(res.data.admins);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load admins');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchAdmins(); }, []);
+
+  const handleCreate = async () => {
+    if (!formName.trim() || !formEmail.trim()) return;
+    setFormLoading(true);
+    try {
+      const res = await adminApi.createAdmin({ name: formName.trim(), email: formEmail.trim() });
+      setGeneratedPassword(res.data.generatedPassword);
+      setShowAddModal(false);
+      setShowPasswordModal(true);
+      setFormName('');
+      setFormEmail('');
+      fetchAdmins();
+    } catch (err: any) {
+      setError(err.message || 'Failed to create admin');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!selectedAdmin) return;
+    setFormLoading(true);
+    try {
+      await adminApi.updateAdmin(selectedAdmin._id, { name: formName.trim(), email: formEmail.trim() });
+      setShowEditModal(false);
+      setSelectedAdmin(null);
+      fetchAdmins();
+    } catch (err: any) {
+      setError(err.message || 'Failed to update admin');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (admin: AdminUser) => {
+    setFormLoading(true);
+    try {
+      const res = await adminApi.resetPassword(admin._id);
+      setGeneratedPassword(res.data.generatedPassword);
+      setShowPasswordModal(true);
+    } catch (err: any) {
+      setError(err.message || 'Failed to reset password');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedAdmin) return;
+    setFormLoading(true);
+    try {
+      await adminApi.deleteAdmin(selectedAdmin._id);
+      setShowDeleteConfirm(false);
+      setSelectedAdmin(null);
+      fetchAdmins();
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete admin');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleToggleActive = async (admin: AdminUser) => {
+    try {
+      await adminApi.updateAdmin(admin._id, { isActive: !admin.isActive });
+      fetchAdmins();
+    } catch (err: any) {
+      setError(err.message || 'Failed to update status');
+    }
+  };
+
+  const openEdit = (admin: AdminUser) => {
+    setSelectedAdmin(admin);
+    setFormName(admin.name);
+    setFormEmail(admin.email);
+    setShowEditModal(true);
+  };
+
+  const copyPassword = () => {
+    navigator.clipboard.writeText(generatedPassword);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Modal backdrop
+  const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.ReactNode }> = ({ open, onClose, children }) => {
+    if (!open) return null;
+    return (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
+        <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="animate-in fade-in duration-500">
+      <SectionHeader
+        title="Admin Management"
+        secondaryAction={
+          <button
+            onClick={() => { setFormName(''); setFormEmail(''); setShowAddModal(true); }}
+            className="flex items-center space-x-2 bg-brand-accent text-white px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-dark shadow-xl shadow-brand-accent/20 transition-all"
+          >
+            <Plus size={16} />
+            <span>Add New Admin</span>
+          </button>
+        }
+      />
+
+      {error && (
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center justify-between">
+          <span className="text-sm text-red-600 font-medium">{error}</span>
+          <button onClick={() => setError('')} className="text-red-400 hover:text-red-600"><X size={16} /></button>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="bg-white p-10 rounded-[2.5rem] border border-zinc-200 shadow-sm">
+          <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block mb-4">Total Admins</span>
+          <span className="text-3xl font-black text-brand-dark">{admins.length}</span>
+        </div>
+        <div className="bg-white p-10 rounded-[2.5rem] border border-zinc-200 shadow-sm">
+          <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block mb-4">Active</span>
+          <span className="text-3xl font-black text-green-600">{admins.filter(a => a.isActive).length}</span>
+        </div>
+        <div className="bg-white p-10 rounded-[2.5rem] border border-zinc-200 shadow-sm">
+          <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block mb-4">Inactive</span>
+          <span className="text-3xl font-black text-zinc-400">{admins.filter(a => !a.isActive).length}</span>
+        </div>
+      </div>
+
+      {/* Admin Table */}
+      <div className="bg-white rounded-[2.5rem] border border-zinc-200 shadow-sm overflow-hidden">
+        {loading ? (
+          <div className="py-32 text-center">
+            <div className="w-10 h-10 border-3 border-brand-accent/20 border-t-brand-accent rounded-full animate-spin mx-auto mb-6" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Loading admins...</span>
+          </div>
+        ) : admins.length === 0 ? (
+          <div className="py-32 text-center">
+            <Shield size={48} className="text-zinc-200 mx-auto mb-6" />
+            <h4 className="text-xl font-black text-brand-dark uppercase tracking-tighter mb-2">No Admins Found</h4>
+            <p className="text-zinc-400 text-sm">Add your first admin to get started.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-100">
+            {/* Header */}
+            <div className="grid grid-cols-12 gap-4 px-10 py-5 bg-zinc-50/80 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+              <div className="col-span-3">Name</div>
+              <div className="col-span-3">Email</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-2">Last Login</div>
+              <div className="col-span-2 text-right">Actions</div>
+            </div>
+            {admins.map(admin => (
+              <div key={admin._id} className="grid grid-cols-12 gap-4 px-10 py-6 items-center hover:bg-zinc-50 transition-all group">
+                <div className="col-span-3">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent font-black text-sm">
+                      {admin.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-zinc-800">{admin.name}</div>
+                      {admin.mustChangePassword && (
+                        <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">Must change password</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-3 text-sm text-zinc-500 font-medium truncate">{admin.email}</div>
+                <div className="col-span-2">
+                  <button
+                    onClick={() => handleToggleActive(admin)}
+                    disabled={admin.email === currentUser?.email}
+                    className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+                      admin.isActive
+                        ? 'bg-green-50 text-green-600 border border-green-100 hover:bg-green-100'
+                        : 'bg-zinc-100 text-zinc-400 border border-zinc-200 hover:bg-zinc-200'
+                    } ${admin.email === currentUser?.email ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    {admin.isActive ? 'Active' : 'Inactive'}
+                  </button>
+                </div>
+                <div className="col-span-2 text-[10px] text-zinc-400 font-medium">
+                  {admin.lastLogin ? new Date(admin.lastLogin).toLocaleDateString() : 'Never'}
+                </div>
+                <div className="col-span-2 flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => openEdit(admin)}
+                    className="p-2.5 bg-zinc-100 hover:bg-brand-dark hover:text-white rounded-xl text-zinc-500 transition-all"
+                    title="Edit"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleResetPassword(admin)}
+                    className="p-2.5 bg-zinc-100 hover:bg-amber-500 hover:text-white rounded-xl text-zinc-500 transition-all"
+                    title="Reset Password"
+                  >
+                    <RotateCcw size={14} />
+                  </button>
+                  {admin.email !== currentUser?.email && (
+                    <button
+                      onClick={() => { setSelectedAdmin(admin); setShowDeleteConfirm(true); }}
+                      className="p-2.5 bg-zinc-100 hover:bg-red-500 hover:text-white rounded-xl text-zinc-500 transition-all"
+                      title="Delete"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Add Admin Modal ── */}
+      <Modal open={showAddModal} onClose={() => setShowAddModal(false)}>
+        <div className="p-10">
+          <h3 className="text-xl font-black uppercase tracking-tighter text-brand-dark mb-2">Add New Admin</h3>
+          <p className="text-sm text-zinc-400 mb-8">A secure password will be generated automatically.</p>
+          <div className="space-y-6">
+            <InputField label="Full Name" value={formName} onChange={setFormName} required />
+            <InputField label="Email Address" value={formEmail} onChange={setFormEmail} type="email" required />
+          </div>
+          <div className="flex items-center space-x-4 mt-10">
+            <button
+              onClick={handleCreate}
+              disabled={formLoading || !formName.trim() || !formEmail.trim()}
+              className="flex items-center space-x-2 px-8 py-4 bg-brand-dark text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-accent transition-all disabled:opacity-50 shadow-lg"
+            >
+              {formLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Plus size={14} />}
+              <span>Create Admin</span>
+            </button>
+            <button onClick={() => setShowAddModal(false)} className="px-8 py-4 bg-zinc-100 text-zinc-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all">Cancel</button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Edit Admin Modal ── */}
+      <Modal open={showEditModal} onClose={() => setShowEditModal(false)}>
+        <div className="p-10">
+          <h3 className="text-xl font-black uppercase tracking-tighter text-brand-dark mb-8">Edit Admin</h3>
+          <div className="space-y-6">
+            <InputField label="Full Name" value={formName} onChange={setFormName} required />
+            <InputField label="Email Address" value={formEmail} onChange={setFormEmail} type="email" required />
+          </div>
+          <div className="flex items-center space-x-4 mt-10">
+            <button
+              onClick={handleUpdate}
+              disabled={formLoading || !formName.trim() || !formEmail.trim()}
+              className="flex items-center space-x-2 px-8 py-4 bg-brand-dark text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-accent transition-all disabled:opacity-50 shadow-lg"
+            >
+              {formLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={14} />}
+              <span>Update Admin</span>
+            </button>
+            <button onClick={() => setShowEditModal(false)} className="px-8 py-4 bg-zinc-100 text-zinc-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all">Cancel</button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Generated Password Modal ── */}
+      <Modal open={showPasswordModal} onClose={() => { setShowPasswordModal(false); setGeneratedPassword(''); setCopied(false); }}>
+        <div className="p-10 text-center">
+          <div className="w-16 h-16 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle size={28} className="text-green-500" />
+          </div>
+          <h3 className="text-xl font-black uppercase tracking-tighter text-brand-dark mb-2">Password Generated</h3>
+          <p className="text-sm text-zinc-400 mb-8">Copy this password and share it securely. It will not be shown again.</p>
+          <div className="bg-zinc-950 rounded-2xl p-6 flex items-center justify-between mb-6">
+            <code className="text-brand-accent font-mono text-lg tracking-wider">{generatedPassword}</code>
+            <button
+              onClick={copyPassword}
+              className={`p-3 rounded-xl transition-all ${copied ? 'bg-green-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            >
+              {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
+            </button>
+          </div>
+          <p className="text-[9px] font-black uppercase tracking-widest text-amber-500 mb-8">
+            ⚠ This password is shown only once. Make sure to copy it now.
+          </p>
+          <button
+            onClick={() => { setShowPasswordModal(false); setGeneratedPassword(''); setCopied(false); }}
+            className="px-10 py-4 bg-brand-dark text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-accent transition-all shadow-lg"
+          >
+            Done
+          </button>
+        </div>
+      </Modal>
+
+      {/* ── Delete Confirm Modal ── */}
+      <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)}>
+        <div className="p-10 text-center">
+          <div className="w-16 h-16 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Trash2 size={28} className="text-red-500" />
+          </div>
+          <h3 className="text-xl font-black uppercase tracking-tighter text-brand-dark mb-2">Delete Admin</h3>
+          <p className="text-sm text-zinc-400 mb-8">Are you sure you want to delete <strong>{selectedAdmin?.name}</strong>? This action cannot be undone.</p>
+          <div className="flex items-center justify-center space-x-4">
+            <button
+              onClick={handleDelete}
+              disabled={formLoading}
+              className="flex items-center space-x-2 px-8 py-4 bg-red-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-all disabled:opacity-50 shadow-lg"
+            >
+              {formLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Trash2 size={14} />}
+              <span>Delete</span>
+            </button>
+            <button onClick={() => setShowDeleteConfirm(false)} className="px-8 py-4 bg-zinc-100 text-zinc-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all">Cancel</button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
 const Admin: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -1879,6 +2244,7 @@ const Admin: React.FC = () => {
     { label: 'Mission & Vision', path: '/admin/about', icon: <Info size={18} /> },
     { label: 'Methodology Lab', path: '/admin/research', icon: <Layers size={18} /> },
     { label: 'Dialogue Channels', path: '/admin/contact', icon: <MessageSquare size={18} /> },
+    { label: 'Admin Management', path: '/admin/admins', icon: <Shield size={18} /> },
   ];
 
   return (
@@ -1937,6 +2303,7 @@ const Admin: React.FC = () => {
             <Route path="/about" element={<AboutEditor />} />
             <Route path="/research" element={<ResearchEditor />} />
             <Route path="/contact" element={<ContactEditor />} />
+            <Route path="/admins" element={<AdminManager />} />
           </Routes>
         </div>
       </div>
